@@ -7,7 +7,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
@@ -68,7 +67,6 @@ export function AppSidebar() {
               </h2>
             </div>
           </div>
-          <SidebarTrigger className="ml-auto group-data-[collapsible=icon]:hidden" />
         </div>
       </SidebarHeader>
       <SidebarContent>
