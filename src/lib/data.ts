@@ -1,4 +1,4 @@
-import type { Kpi, JobCard, Train, DepotLayout } from './types';
+import type { Kpi, JobCard, Train, DepotLayout, BrandingDetails } from './types';
 
 export const kpis: Kpi[] = [
   {
@@ -75,6 +75,36 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
   const trackOptions = ['SL1', 'SL2', 'SL3', 'ML1', 'ML2', 'WL1', 'Main-N', 'Main-S'];
   const brandingStatus = i % 5 === 0 ? 'Yes' : 'No';
 
+  let branding: BrandingDetails;
+  if (brandingStatus === 'Yes') {
+    branding = {
+      status: 'Yes',
+      contractId: `CTR-${2024 + i}`,
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+      contractValue: 50000 + Math.floor(Math.random() * 50000),
+      hourlyRate: 150 + Math.floor(Math.random() * 100),
+      contractStatus: 'Active',
+      lastUpdated: new Date().toISOString().split('T')[0],
+      advertiserName: `Ad-Venture Inc. #${i + 1}`,
+      brandingType: ['Full Wrap', 'Partial Wrap', 'Interior'][i % 3] as 'Full Wrap' | 'Partial Wrap' | 'Interior',
+      brandingDescription: `Campaign for client ${i+1}.`,
+      creativeContent: 'https://example.com/creative.pdf',
+      placementInstructions: 'Apply to all exterior surfaces, avoiding windows.',
+      requiredHours: 1200,
+      minimumDailyHours: 4,
+      minimumWeeklyHours: 28,
+      slaRequirements: 'Maintain 95% visibility, no peeling or fading.',
+      penaltyTerms: '5% reduction in monthly fee for SLA breaches.',
+      penaltyPercentage: 5,
+      contactPerson: 'Alex Doe',
+      contactEmail: `alex.doe${i+1}@ad-venture.com`,
+      contactPhone: '+1-555-123-4567',
+    };
+  } else {
+    branding = { status: 'No' };
+  }
+
   return {
     id: trainId,
     model: 'Alstom Metropolis',
@@ -106,11 +136,7 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
       status: i % 3 === 0 ? 'Pending' : 'Cleaned',
       lastCleaned: new Date(Date.now() - (Math.random() * 10 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
     },
-    branding: {
-      status: brandingStatus,
-      contractUntil: brandingStatus === 'Yes' ? '2025-12-31' : undefined,
-      agency: brandingStatus === 'Yes' ? 'Ad-Venture Inc.' : undefined,
-    },
+    branding: branding,
     isElectric: true,
     engineType: 'AC Traction',
   };

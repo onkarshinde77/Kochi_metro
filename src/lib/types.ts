@@ -20,6 +20,42 @@ export type JobCard = {
   attachments: string[];
 };
 
+export type BrandingDetails = {
+  status: 'Yes' | 'No';
+
+  // Contract Info
+  contractId?: string;
+  startDate?: string;
+  endDate?: string;
+  contractValue?: number;
+  hourlyRate?: number;
+  contractStatus?: 'Active' | 'Expired' | 'Pending';
+  lastUpdated?: string;
+
+  // Branding Info
+  advertiserName?: string;
+  brandingType?: 'Full Wrap' | 'Partial Wrap' | 'Interior';
+  brandingDescription?: string;
+  creativeContent?: string; // URL or description
+  placementInstructions?: string;
+
+  // Performance & SLA
+  requiredHours?: number;
+  minimumDailyHours?: number;
+  minimumWeeklyHours?: number;
+  slaRequirements?: string;
+
+  // Penalty & Compliance
+  penaltyTerms?: string;
+  penaltyPercentage?: number;
+
+  // Contact Info
+  contactPerson?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+};
+
+
 export type Train = {
   // Identification
   id: string; // Train ID / Number
@@ -68,11 +104,7 @@ export type Train = {
     status: 'Cleaned' | 'Pending';
     lastCleaned: string;
   };
-  branding: {
-    status: 'Yes' | 'No';
-    contractUntil?: string;
-    agency?: string;
-  };
+  branding: BrandingDetails;
   isElectric: true;
   engineType: string;
 };
