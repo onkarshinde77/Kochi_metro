@@ -11,13 +11,12 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const RunWhatIfSimulationInputSchema = z.object({
-  maintenanceDelays: z
-    .string()
-    .describe('A description of any maintenance delays.'),
-  trackClosures: z.string().describe('A description of any track closures.'),
-  otherConditions: z
-    .string()
-    .describe('A description of any other conditions to simulate.'),
+  maintenanceDelay: z.string().describe('Potential delays in maintenance activities (e.g., "HVAC repair on T-003 delayed by 2 hours").'),
+  certificateRisk: z.string().describe('Risks related to certificate clearance (e.g., "T-007 has a 50% chance of failing inspection").'),
+  cleaningSlot: z.string().describe('Availability of cleaning slots (e.g., "Washing line 1 occupied until 4 PM").'),
+  trackClosure: z.string().describe('Any planned or unplanned track closures (e.g., "Mainline South closed for 1 hour").'),
+  demand: z.string().describe('Passenger demand forecasts (e.g., "High demand expected for evening peak hours").'),
+  weather: z.string().describe('Current or forecasted weather conditions (e.g., "Heavy rain expected").'),
 });
 export type RunWhatIfSimulationInput = z.infer<
   typeof RunWhatIfSimulationInputSchema
@@ -48,7 +47,14 @@ const prompt = ai.definePrompt({
   name: 'runWhatIfSimulationPrompt',
   input: {schema: RunWhatIfSimulationInputSchema},
   output: {schema: RunWhatIfSimulationOutputSchema},
-  prompt: `You are a train schedule optimizer. Given the following conditions, predict the impact on the train schedule, recommend changes to resource allocation, and describe potential disruptions.\n\nMaintenance Delays: {{{maintenanceDelays}}}\nTrack Closures: {{{trackClosures}}}\nOther Conditions: {{{otherConditions}}}`,
+  prompt: `You are a train schedule optimizer for an electric metro fleet. Given the following conditions, predict the impact on the train schedule, recommend changes to resource allocation, and describe potential disruptions.
+
+Maintenance Delay: {{{maintenanceDelay}}}
+Certificate Risk: {{{certificateRisk}}}
+Cleaning Slot: {{{cleaningSlot}}}
+Track Closure: {{{trackClosure}}}
+Demand: {{{demand}}}
+Weather: {{{weather}}}`,
 });
 
 const runWhatIfSimulationFlow = ai.defineFlow(
