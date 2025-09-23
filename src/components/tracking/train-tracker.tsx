@@ -82,6 +82,16 @@ const columns: ColumnDef<Train>[] = [
     header: "Current Location",
     cell: ({ row }) => <div>{row.getValue("currentTrack")}</div>,
   },
+   {
+    accessorKey: 'lat',
+    header: 'Latitude',
+    cell: ({row}) => <div>{row.getValue('lat')}</div>,
+  },
+  {
+    accessorKey: 'lng',
+    header: 'Longitude',
+    cell: ({row}) => <div>{row.getValue('lng')}</div>,
+  },
   {
     accessorKey: "mileage",
     header: ({ column }) => {
@@ -107,7 +117,10 @@ export function TrainTracker({ initialStatusFilter }: { initialStatusFilter: str
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     initialStatusFilter ? [{ id: 'status', value: [initialStatusFilter] }] : []
   );
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    lat: false,
+    lng: false,
+  });
 
   const table = useReactTable({
     data,

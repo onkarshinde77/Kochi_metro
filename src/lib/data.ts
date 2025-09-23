@@ -70,31 +70,31 @@ export const pastJobCards: JobCard[] = [
 ];
 
 export const initialTrains: Train[] = [
-  { id: 'T-001', status: 'Idle', currentTrack: 'SL1', mileage: 120500, isElectric: true },
-  { id: 'T-002', status: 'Idle', currentTrack: 'SL1', mileage: 85200, isElectric: true },
-  { id: 'T-003', status: 'Maintenance', currentTrack: 'ML1', mileage: 150300, isElectric: true },
-  { id: 'T-004', status: 'Idle', currentTrack: 'SL2', mileage: 45100, isElectric: true },
-  { id: 'T-005', status: 'Operational', currentTrack: 'Main-N', mileage: 210000, isElectric: true },
-  { id: 'T-006', status: 'Idle', currentTrack: 'SL3', mileage: 95000, isElectric: true },
-  { id: 'T-007', status: 'Maintenance', currentTrack: 'ML2', mileage: 180000, isElectric: true },
-  { id: 'T-008', status: 'Operational', currentTrack: 'Main-S', mileage: 225000, isElectric: true },
-  { id: 'T-009', status: 'Washing', currentTrack: 'WL1', mileage: 12500, isElectric: true },
-  { id: 'T-010', status: 'Idle', currentTrack: 'SL1', mileage: 75000, isElectric: true },
-  { id: 'T-011', status: 'Idle', currentTrack: 'SL2', mileage: 8000, isElectric: true },
-  { id: 'T-012', status: 'Idle', currentTrack: 'SL2', mileage: 130000, isElectric: true },
-  { id: 'T-013', status: 'Idle', currentTrack: 'SL3', mileage: 145000, isElectric: true },
-  { id: 'T-014', status: 'Maintenance', currentTrack: 'ML1', mileage: 99000, isElectric: true },
-  { id: 'T-015', status: 'Idle', currentTrack: 'SL3', mileage: 165000, isElectric: true },
-  { id: 'T-016', status: 'Washing', currentTrack: 'WL1', mileage: 42000, isElectric: true },
-  { id: 'T-017', status: 'Idle', currentTrack: 'SL1', mileage: 110000, isElectric: true },
-  { id: 'T-018', status: 'Idle', currentTrack: 'SL2', mileage: 62000, isElectric: true },
-  { id: 'T-019', status: 'Maintenance', currentTrack: 'ML2', mileage: 195000, isElectric: true },
-  { id: 'T-020', status: 'Idle', currentTrack: 'SL3', mileage: 88000, isElectric: true },
-  { id: 'T-021', status: 'Operational', currentTrack: 'Main-N', mileage: 235000, isElectric: true },
-  { id: 'T-022', status: 'Idle', currentTrack: 'SL1', mileage: 54000, isElectric: true },
-  { id: 'T-023', status: 'Idle', currentTrack: 'SL2', mileage: 78000, isElectric: true },
-  { id: 'T-024', status: 'Washing', currentTrack: 'WL1', mileage: 33000, isElectric: true },
-  { id: 'T-025', status: 'Idle', currentTrack: 'SL3', mileage: 92000, isElectric: true },
+  { id: 'T-001', status: 'Idle', currentTrack: 'SL1', mileage: 120500, isElectric: true, lat: 9.9722, lng: 76.2845 }, // Muttom Yard
+  { id: 'T-002', status: 'Idle', currentTrack: 'SL1', mileage: 85200, isElectric: true, lat: 9.9720, lng: 76.2848 }, // Muttom Yard
+  { id: 'T-003', status: 'Maintenance', currentTrack: 'ML1', mileage: 150300, isElectric: true, lat: 9.9718, lng: 76.2851 }, // Muttom Yard
+  { id: 'T-004', status: 'Idle', currentTrack: 'SL2', mileage: 45100, isElectric: true, lat: 9.9716, lng: 76.2854 }, // Muttom Yard
+  { id: 'T-005', status: 'Operational', currentTrack: 'Main-N', mileage: 210000, isElectric: true, lat: 10.0278, lng: 76.3077 }, // Near Edapally
+  { id: 'T-006', status: 'Idle', currentTrack: 'SL3', mileage: 95000, isElectric: true, lat: 9.9714, lng: 76.2857 }, // Muttom Yard
+  { id: 'T-007', status: 'Maintenance', currentTrack: 'ML2', mileage: 180000, isElectric: true, lat: 9.9712, lng: 76.2860 }, // Muttom Yard
+  { id: 'T-008', status: 'Operational', currentTrack: 'Main-S', mileage: 225000, isElectric: true, lat: 9.9442, lng: 76.3528 }, // Near Vyttila
+  { id: 'T-009', status: 'Washing', currentTrack: 'WL1', mileage: 12500, isElectric: true, lat: 9.9710, lng: 76.2863 }, // Muttom Yard
+  { id: 'T-010', status: 'Idle', currentTrack: 'SL1', mileage: 75000, isElectric: true, lat: 9.9708, lng: 76.2866 }, // Muttom Yard
+  { id: 'T-011', status: 'Idle', currentTrack: 'SL2', mileage: 8000, isElectric: true, lat: 9.9706, lng: 76.2869 }, // Muttom Yard
+  { id: 'T-012', status: 'Idle', currentTrack: 'SL2', mileage: 130000, isElectric: true, lat: 9.9704, lng: 76.2872 }, // Muttom Yard
+  { id: 'T-013', status: 'Idle', currentTrack: 'SL3', mileage: 145000, isElectric: true, lat: 9.9702, lng: 76.2875 }, // Muttom Yard
+  { id: 'T-014', status: 'Maintenance', currentTrack: 'ML1', mileage: 99000, isElectric: true, lat: 9.9700, lng: 76.2878 }, // Muttom Yard
+  { id: 'T-015', status: 'Idle', currentTrack: 'SL3', mileage: 165000, isElectric: true, lat: 9.9698, lng: 76.2881 }, // Muttom Yard
+  { id: 'T-016', status: 'Washing', currentTrack: 'WL1', mileage: 42000, isElectric: true, lat: 9.9696, lng: 76.2884 }, // Muttom Yard
+  { id: 'T-017', status: 'Idle', currentTrack: 'SL1', mileage: 110000, isElectric: true, lat: 9.9694, lng: 76.2887 }, // Muttom Yard
+  { id: 'T-018', status: 'Idle', currentTrack: 'SL2', mileage: 62000, isElectric: true, lat: 9.9692, lng: 76.2890 }, // Muttom Yard
+  { id: 'T-019', status: 'Maintenance', currentTrack: 'ML2', mileage: 195000, isElectric: true, lat: 9.9690, lng: 76.2893 }, // Muttom Yard
+  { id: 'T-020', status: 'Idle', currentTrack: 'SL3', mileage: 88000, isElectric: true, lat: 9.9688, lng: 76.2896 }, // Muttom Yard
+  { id: 'T-021', status: 'Operational', currentTrack: 'Main-N', mileage: 235000, isElectric: true, lat: 10.0800, lng: 76.3200 }, // Near Aluva
+  { id: 'T-022', status: 'Idle', currentTrack: 'SL1', mileage: 54000, isElectric: true, lat: 9.9686, lng: 76.2899 }, // Muttom Yard
+  { id: 'T-023', status: 'Idle', currentTrack: 'SL2', mileage: 78000, isElectric: true, lat: 9.9684, lng: 76.2902 }, // Muttom Yard
+  { id: 'T-024', status: 'Washing', currentTrack: 'WL1', mileage: 33000, isElectric: true, lat: 9.9682, lng: 76.2905 }, // Muttom Yard
+  { id: 'T-025', status: 'Idle', currentTrack: 'SL3', mileage: 92000, isElectric: true, lat: 9.9680, lng: 76.2908 }, // Muttom Yard
 ];
 
 export const depotLayout: DepotLayout = {

@@ -26,6 +26,8 @@ export type Train = {
   currentTrack: string;
   mileage: number;
   isElectric: true;
+  lat: number;
+  lng: number;
 };
 
 export type Track = {
