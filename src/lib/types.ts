@@ -46,11 +46,16 @@ export type Train = {
   fitnessCertificate: {
     validFrom: string;
     validUntil: string;
+    issuer: string;
   };
-  safetyCertificateExpiry: string;
+  safetyCertificate: {
+    expiry: string;
+    type: string;
+  };
 
   // Maintenance
   nextMaintenanceDate: string;
+  lastMaintenanceDate: string;
   maintenanceInterval: {
     distance: number; // in km
     time: number; // in months
@@ -59,9 +64,17 @@ export type Train = {
   mileageThreshold: number; // Mileage Threshold before Inspection
 
   // Other
-  cleaningStatus: 'Cleaned' | 'Pending';
-  brandingStatus: 'Yes' | 'No';
+  cleaning: {
+    status: 'Cleaned' | 'Pending';
+    lastCleaned: string;
+  };
+  branding: {
+    status: 'Yes' | 'No';
+    contractUntil?: string;
+    agency?: string;
+  };
   isElectric: true;
+  engineType: string;
 };
 
 export type Track = {

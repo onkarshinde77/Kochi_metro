@@ -73,11 +73,12 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
   const trainId = `T-${(i + 1).toString().padStart(3, '0')}`;
   const statusOptions: Train['status'][] = ['Operational', 'Maintenance', 'Idle', 'Washing'];
   const trackOptions = ['SL1', 'SL2', 'SL3', 'ML1', 'ML2', 'WL1', 'Main-N', 'Main-S'];
-  
+  const brandingStatus = i % 5 === 0 ? 'Yes' : 'No';
+
   return {
     id: trainId,
     model: 'Alstom Metropolis',
-    manufacturingYear: 2018 + Math.floor(i/5),
+    manufacturingYear: 2018 + Math.floor(i / 5),
     vendor: 'Alstom',
     coachCount: 3,
     capacity: { seating: 150, standing: 650 },
@@ -90,15 +91,28 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
     fitnessCertificate: {
       validFrom: '2024-01-01',
       validUntil: '2024-12-31',
+      issuer: 'Indian Railways',
     },
-    safetyCertificateExpiry: '2025-06-30',
-    nextMaintenanceDate: new Date(2024, 8 + Math.floor(i/10), 15).toISOString().split('T')[0],
+    safetyCertificate: {
+      expiry: '2025-06-30',
+      type: 'CBTC-A2',
+    },
+    nextMaintenanceDate: new Date(2024, 8 + Math.floor(i / 10), 15).toISOString().split('T')[0],
+    lastMaintenanceDate: new Date(2024, 2 + Math.floor(i / 10), 15).toISOString().split('T')[0],
     maintenanceInterval: { distance: 20000, time: 6 },
     mileage: Math.floor(Math.random() * 200000) + 5000,
     mileageThreshold: 150000,
-    cleaningStatus: i % 3 === 0 ? 'Pending' : 'Cleaned',
-    brandingStatus: i % 5 === 0 ? 'Yes' : 'No',
+    cleaning: {
+      status: i % 3 === 0 ? 'Pending' : 'Cleaned',
+      lastCleaned: new Date(Date.now() - (Math.random() * 10 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
+    },
+    branding: {
+      status: brandingStatus,
+      contractUntil: brandingStatus === 'Yes' ? '2025-12-31' : undefined,
+      agency: brandingStatus === 'Yes' ? 'Ad-Venture Inc.' : undefined,
+    },
     isElectric: true,
+    engineType: 'AC Traction',
   };
 });
 
