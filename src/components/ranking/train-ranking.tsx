@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
@@ -117,7 +116,7 @@ export function TrainRanking() {
               </TableBody>
             </Table>
           </div>
-          <Button onClick={handleRanking} disabled={isPending || trainsForRanking.length === 0} className="mt-4 w-28">
+          <Button onClick={handleRanking} disabled={isPending || trainsForRanking.length === 0} className="mt-4 w-40">
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
