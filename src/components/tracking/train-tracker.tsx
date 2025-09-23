@@ -14,9 +14,18 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown } from "lucide-react";
+import { ArrowUpDown, ChevronDown, PlusCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -101,9 +110,76 @@ const columns: ColumnDef<Train>[] = [
 
 const statusOptions: Train['status'][] = ['Operational', 'Maintenance', 'Idle', 'Washing'];
 
+function AddTrainForm({ onAddTrain }: { onAddTrain: (train: Train) => void }) {
+  const [newTrain, setNewTrain] = React.useState({
+    id: "",
+    status: "Idle" as Train['status'],
+    currentTrack: "",
+    mileage: ""
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTrain.id || !newTrain.currentTrack || !newTrain.mileage) {
+        // Simple validation
+        alert("Please fill all fields");
+        return;
+    }
+    onAddTrain({
+        ...newTrain,
+        mileage: Number(newTrain.mileage),
+        isElectric: true
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+            <Label htmlFor="id">Train ID</Label>
+            <Input id="id" value={newTrain.id} onChange={(e) => setNewTrain({...newTrain, id: e.target.value})} placeholder="e.g., T-026" />
+        </div>
+         <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select value={newTrain.status} onValueChange={(value) => setNewTrain({...newTrain, status: value as Train['status']})}>
+                <SelectTrigger id="status">
+                    <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                    {statusOptions.map(status => (
+                        <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="currentTrack">Current Location</Label>
+            <Input id="currentTrack" value={newTrain.currentTrack} onChange={(e) => setNewTrain({...newTrain, currentTrack: e.target.value})} placeholder="e.g., SL4" />
+        </div>
+        <div className="space-y-2">
+            <Label htmlFor="mileage">Mileage (km)</Label>
+            <Input id="mileage" type="number" value={newTrain.mileage} onChange={(e) => setNewTrain({...newTrain, mileage: e.target.value})} placeholder="e.g., 50000" />
+        </div>
+      </div>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="secondary">
+            Cancel
+          </Button>
+        </DialogClose>
+        <Button type="submit">Add Train</Button>
+      </DialogFooter>
+    </form>
+  )
+}
+
+
 export function TrainTracker({ initialStatusFilter }: { initialStatusFilter: string | null }) {
   const [data, setData] = React.useState<Train[]>(initialTrains);
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [isAddTrainOpen, setIsAddTrainOpen] = React.useState(false);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     initialStatusFilter ? [{ id: 'status', value: [initialStatusFilter] }] : []
   );
@@ -133,6 +209,11 @@ export function TrainTracker({ initialStatusFilter }: { initialStatusFilter: str
       table.getColumn('status')?.setFilterValue([value]);
     }
   };
+  
+  const handleAddTrain = (train: Train) => {
+    setData(prevData => [...prevData, train]);
+    setIsAddTrainOpen(false);
+  }
 
   const currentStatusFilter = (table.getColumn('status')?.getFilterValue() as string[] | undefined)?.[0] ?? 'all';
 
@@ -163,32 +244,49 @@ export function TrainTracker({ initialStatusFilter }: { initialStatusFilter: str
                     </SelectContent>
                   </Select>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="ml-auto">
-                      Columns <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                      {table
-                      .getAllColumns()
-                      .filter((column) => column.getCanHide())
-                      .map((column) => {
-                          return (
-                          <DropdownMenuCheckboxItem
-                              key={column.id}
-                              className="capitalize"
-                              checked={column.getIsVisible()}
-                              onCheckedChange={(value) =>
-                              column.toggleVisibility(!!value)
-                              }
-                          >
-                              {column.id === 'id' ? 'Train ID' : column.id}
-                          </DropdownMenuCheckboxItem>
-                          );
-                      })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="ml-auto flex items-center gap-2">
+                    <Dialog open={isAddTrainOpen} onOpenChange={setIsAddTrainOpen}>
+                        <DialogTrigger asChild>
+                             <Button>
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                Add Train
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Add New Train</DialogTitle>
+                            </DialogHeader>
+                            <AddTrainForm onAddTrain={handleAddTrain} />
+                        </DialogContent>
+                    </Dialog>
+                   
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                          <Button variant="outline">
+                          Columns <ChevronDown className="ml-2 h-4 w-4" />
+                          </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                          {table
+                          .getAllColumns()
+                          .filter((column) => column.getCanHide())
+                          .map((column) => {
+                              return (
+                              <DropdownMenuCheckboxItem
+                                  key={column.id}
+                                  className="capitalize"
+                                  checked={column.getIsVisible()}
+                                  onCheckedChange={(value) =>
+                                  column.toggleVisibility(!!value)
+                                  }
+                              >
+                                  {column.id === 'id' ? 'Train ID' : column.id}
+                              </DropdownMenuCheckboxItem>
+                              );
+                          })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
             <div className="rounded-md border">
                 <Table>
