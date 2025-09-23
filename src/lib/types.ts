@@ -17,7 +17,7 @@ export type JobCard = {
 
 export type Train = {
   id: string;
-  status: 'Operational' | 'Maintenance' | 'Idle';
+  status: 'Operational' | 'Maintenance' | 'Idle' | 'Washing';
   currentTrack: string;
 };
 

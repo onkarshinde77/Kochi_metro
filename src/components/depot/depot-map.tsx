@@ -30,12 +30,35 @@ export function DepotMap() {
     if (!trainToMove) return;
 
     const sourceTrackId = trainToMove.currentTrack;
-    if (sourceTrackId === targetTrackId) return; // No change
+    if (sourceTrackId === targetTrackId) {
+      setDraggedTrainId(null);
+      return; 
+    }
+
+    const targetTrack = depotLayout.tracks.find(t => t.id === targetTrackId);
+    if (!targetTrack) return;
+    
+    let newStatus: Train['status'] = 'Idle';
+    switch (targetTrack.type) {
+        case 'Maintenance':
+            newStatus = 'Maintenance';
+            break;
+        case 'Washing':
+            newStatus = 'Washing';
+            break;
+        case 'Mainline':
+            newStatus = 'Operational';
+            break;
+        case 'Stabling':
+        default:
+            newStatus = 'Idle';
+            break;
+    }
 
     // Update trains state
     setTrains(prevTrains =>
       prevTrains.map(t =>
-        t.id === draggedTrainId ? { ...t, currentTrack: targetTrackId } : t
+        t.id === draggedTrainId ? { ...t, currentTrack: targetTrackId, status: newStatus } : t
       )
     );
 
@@ -56,25 +79,12 @@ export function DepotMap() {
     setDraggedTrainId(null);
   };
 
-  const trackIcons = {
-    Stabling: <TrainIcon className="h-4 w-4" />,
-    Maintenance: <Wrench className="h-4 w-4" />,
-    Washing: <WashingMachine className="h-4 w-4" />,
-    Mainline: <Milestone className="h-4 w-4" />,
-  };
-  
   const getTrainById = (id: string) => trains.find(t => t.id === id);
 
   return (
     <Card>
       <CardContent className="p-4">
         <div className="space-y-4">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1"><TrainIcon className="h-4 w-4 text-blue-500" /> Stabling</div>
-              <div className="flex items-center gap-1"><Wrench className="h-4 w-4 text-orange-500" /> Maintenance</div>
-              <div className="flex items-center gap-1"><WashingMachine className="h-4 w-4 text-cyan-500" /> Washing</div>
-              <div className="flex items-center gap-1"><Milestone className="h-4 w-4 text-green-500" /> Mainline</div>
-          </div>
           {depotLayout.tracks.map(track => (
             <div
               key={track.id}
@@ -86,7 +96,7 @@ export function DepotMap() {
                 <p className="font-bold">{track.id}</p>
                 <p className="text-xs text-muted-foreground">{track.type}</p>
               </div>
-              <div className="flex-1 bg-muted rounded-lg h-16 p-2 border-2 border-dashed border-gray-300 flex items-center gap-2">
+              <div className="flex-1 bg-muted rounded-lg h-24 p-2 border-2 border-dashed border-gray-300 flex flex-wrap items-start gap-2 overflow-x-auto">
                 {track.trains.map(trainId => {
                   const train = getTrainById(trainId);
                   if (!train) return null;
@@ -96,10 +106,11 @@ export function DepotMap() {
                       draggable
                       onDragStart={(e) => handleDragStart(e, train.id)}
                       className={cn(
-                        "p-2 rounded-md h-12 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing w-24 shadow-md",
+                        "p-2 rounded-md h-16 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing w-24 shadow-md shrink-0",
                         train.status === 'Operational' && 'bg-green-200 text-green-900',
                         train.status === 'Maintenance' && 'bg-orange-200 text-orange-900',
                         train.status === 'Idle' && 'bg-blue-200 text-blue-900',
+                        train.status === 'Washing' && 'bg-cyan-200 text-cyan-900',
                         draggedTrainId === train.id && 'opacity-50'
                       )}
                     >
@@ -109,7 +120,7 @@ export function DepotMap() {
                   );
                 })}
                  {track.trains.length === 0 && (
-                    <div className="text-sm text-muted-foreground text-center w-full">Empty Track</div>
+                    <div className="text-sm text-muted-foreground text-center w-full self-center">Empty Track</div>
                 )}
               </div>
             </div>
