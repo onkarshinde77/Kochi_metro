@@ -1,4 +1,4 @@
-// src/components/tracking/train-tracker.tsx
+// src/components/all-trains/all-trains-table.tsx
 "use client";
 
 import * as React from "react";
@@ -105,7 +105,7 @@ const columns: ColumnDef<Train>[] = [
 
 const statusOptions: Train['status'][] = ['Operational', 'Maintenance', 'Idle', 'Washing'];
 
-export function TrainTracker({ initialStatusFilter, extraTrains }: { initialStatusFilter: string | null, extraTrains: Train[] }) {
+export function AllTrainsTable({ initialStatusFilter, extraTrains }: { initialStatusFilter: string | null, extraTrains: Train[] }) {
   const [data, setData] = React.useState<Train[]>([...initialTrains, ...extraTrains]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

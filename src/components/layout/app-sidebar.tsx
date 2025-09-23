@@ -61,9 +61,9 @@ const menuItems = [
     label: "Simulations",
   },
   {
-    href: "/tracking",
+    href: "/all-trains",
     icon: Radar,
-    label: "Tracking",
+    label: "All Trains",
   },
 ];
 
@@ -107,6 +107,9 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   asChild
                   href="/trains/add"
+                  isActive={pathname.startsWith('/trains/add')}
+                  variant="default"
+                  className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                   tooltip={{
                     children: "Add New Metro",
                   }}

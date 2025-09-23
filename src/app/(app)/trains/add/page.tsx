@@ -112,7 +112,7 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
       title: "Metro Added",
       description: `Metro ${data.id} has been successfully added to the fleet.`,
     });
-    router.push('/tracking');
+    router.push('/all-trains');
   }
 
   return (

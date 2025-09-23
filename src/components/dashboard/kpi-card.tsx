@@ -45,8 +45,8 @@ export function KpiCard({ kpi }: { kpi: Kpi }) {
 
   if (kpi.filterValue) {
     const href = kpi.filterValue === 'all' 
-      ? '/tracking' 
-      : `/tracking?status=${kpi.filterValue}`;
+      ? '/all-trains' 
+      : `/all-trains?status=${kpi.filterValue}`;
     return (
       <Link href={href} className="h-full">
         {cardContent}
