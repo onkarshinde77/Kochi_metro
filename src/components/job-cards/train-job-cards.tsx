@@ -1,59 +1,44 @@
+// src/components/job-cards/train-job-cards.tsx
 "use client";
 
-import { useState } from 'react';
-import { initialTrains, currentJobCards, pastJobCards } from '@/lib/data';
-import type { Train, JobCard } from '@/lib/types';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { JobCardsTable } from './job-cards-table';
+import { initialTrains, currentJobCards } from '@/lib/data';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '../ui/card';
+import Link from 'next/link';
+import { Train, Wrench } from 'lucide-react';
 
 export function TrainJobCards() {
-  const allJobs = [...currentJobCards, ...pastJobCards];
-  
-  const getJobsForTrain = (trainId: string) => {
-    return allJobs.filter(job => job.trainId === trainId);
-  }
-
   const getOpenJobsCount = (trainId: string) => {
-    return currentJobCards.filter(job => job.trainId === trainId).length;
-  }
+    return currentJobCards.filter(job => job.trainId === trainId && job.status !== 'Completed').length;
+  };
 
   return (
-    <Card>
-      <CardContent className="p-4">
-        <Accordion type="single" collapsible className="w-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {initialTrains.map(train => {
-                const openJobsCount = getOpenJobsCount(train.id);
-                const allTrainJobs = getJobsForTrain(train.id);
-
-                return (
-                <AccordionItem value={train.id} key={train.id} className="border-0">
-                    <div className="bg-muted/50 rounded-lg">
-                        <AccordionTrigger className="p-4 hover:no-underline rounded-t-lg data-[state=open]:bg-primary data-[state=open]:text-primary-foreground data-[state=open]:rounded-b-none">
-                            <div className="flex justify-between items-center w-full">
-                                <span className="font-bold">{train.id}</span>
-                                {openJobsCount > 0 && <Badge variant="destructive">{openJobsCount} Open</Badge>}
-                            </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="p-0 border-t-0 rounded-b-lg overflow-hidden">
-                          <div className="bg-background">
-                            <JobCardsTable jobs={allTrainJobs} />
-                          </div>
-                        </AccordionContent>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      {initialTrains.map(train => {
+        const openJobsCount = getOpenJobsCount(train.id);
+        return (
+          <Link href={`/job-cards/${train.id}`} key={train.id}>
+            <Card className="hover:border-primary hover:shadow-lg transition-all duration-200 cursor-pointer h-full flex flex-col">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-bold text-primary">{train.id}</CardTitle>
+                <Train className="h-6 w-6 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col justify-end">
+                {openJobsCount > 0 ? (
+                    <div className="flex items-center gap-2 text-destructive">
+                        <Wrench className="h-5 w-5" />
+                        <span className="font-bold text-lg">{openJobsCount}</span>
+                        <span className="text-sm">Open Job(s)</span>
                     </div>
-                </AccordionItem>
-                )
-            })}
-            </div>
-        </Accordion>
-      </CardContent>
-    </Card>
+                ) : (
+                  <p className="text-sm text-green-600 font-semibold">No Open Jobs</p>
+                )}
+                <p className="text-xs text-muted-foreground mt-2">Click to view all job cards</p>
+              </CardContent>
+            </Card>
+          </Link>
+        );
+      })}
+    </div>
   );
 }

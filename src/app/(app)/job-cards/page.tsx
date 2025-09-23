@@ -7,7 +7,7 @@ export default function JobCardsPage() {
         <h1 className="text-3xl font-bold tracking-tight">Job Card Management</h1>
       </div>
        <p className="text-muted-foreground">
-        A train-centric view of all maintenance tasks. Click on a train to see its job cards.
+        Select a train to view its maintenance history and open job cards.
       </p>
       <TrainJobCards />
     </div>
