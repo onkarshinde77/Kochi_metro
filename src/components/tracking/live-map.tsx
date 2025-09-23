@@ -51,7 +51,7 @@ export function LiveMap({ trains }: { trains: Train[] }) {
         <div className="flex items-center justify-center h-full bg-muted rounded-lg">
             <div className="text-center text-muted-foreground p-4">
                 <h3 className="font-semibold text-lg">Google Maps API Key is missing.</h3>
-                <p className="text-sm">Please add your API key to the `.env` file to display the map.</p>
+                <p className="text-sm">Please add your API key to the `.env.local` file to display the map.</p>
             </div>
         </div>
     );
