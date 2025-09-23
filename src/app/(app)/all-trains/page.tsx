@@ -25,7 +25,17 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
 
   React.useEffect(() => {
     setIsClient(true);
-    setAllTrains([...initialTrains, ...extraTrains]);
+    setAllTrains(initialTrains);
+  }, []);
+
+  React.useEffect(() => {
+    if(extraTrains.length > 0) {
+      setAllTrains(prevTrains => {
+        const existingIds = new Set(prevTrains.map(t => t.id));
+        const newTrains = extraTrains.filter(t => !existingIds.has(t.id));
+        return [...prevTrains, ...newTrains];
+      });
+    }
   }, [extraTrains]);
   
   const filteredTrains = allTrains.filter(train => {
