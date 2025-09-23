@@ -32,6 +32,7 @@ type TrainForRanking = {
     mileage: number;
     lastCleaningDate: string;
     stablingConstraints: string;
+    reliabilityScore: number;
 }
 
 type RankedTrain = {
@@ -50,11 +51,12 @@ export function TrainRanking() {
     const generatedTrains = allTrains.map(train => ({
         trainId: train.id,
         fitnessCertificateStatus: Math.random() > 0.2 ? "Valid" : "Expired",
-        jobCardStatus: "Completed",
+        jobCardStatus: Math.random() > 0.5 ? "Completed" : "Open",
         brandingPriority: Math.floor(Math.random() * 10) + 1,
         mileage: train.mileage,
         lastCleaningDate: new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        stablingConstraints: Math.random() > 0.8 ? "Platform length restriction" : "None"
+        stablingConstraints: Math.random() > 0.8 ? "Platform length restriction" : "None",
+        reliabilityScore: Math.floor(Math.random() * 11) + 90, // Random score between 90 and 100
     }));
     setTrainsForRanking(generatedTrains);
   }, []);
@@ -83,8 +85,12 @@ export function TrainRanking() {
                 <TableRow>
                   <TableHead>Train ID</TableHead>
                   <TableHead>Fitness Cert.</TableHead>
+                  <TableHead>Maintenance</TableHead>
                   <TableHead>Branding Prio.</TableHead>
                   <TableHead>Mileage</TableHead>
+                  <TableHead>Cleaning</TableHead>
+                  <TableHead>Accessibility</TableHead>
+                  <TableHead>Reliability</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -96,8 +102,16 @@ export function TrainRanking() {
                           {train.fitnessCertificateStatus}
                       </Badge>
                     </TableCell>
+                     <TableCell>
+                      <Badge variant={train.jobCardStatus === 'Completed' ? 'default' : 'secondary'} className={train.jobCardStatus === 'Completed' ? 'bg-green-600' : ''}>
+                          {train.jobCardStatus}
+                      </Badge>
+                    </TableCell>
                     <TableCell>{train.brandingPriority}</TableCell>
                     <TableCell>{train.mileage.toLocaleString()} km</TableCell>
+                    <TableCell>{train.lastCleaningDate}</TableCell>
+                    <TableCell>{train.stablingConstraints}</TableCell>
+                    <TableCell>{train.reliabilityScore}%</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

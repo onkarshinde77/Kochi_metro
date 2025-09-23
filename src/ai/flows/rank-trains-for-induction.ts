@@ -31,6 +31,7 @@ const RankTrainsForInductionInputSchema = z.object({
         stablingConstraints: z
           .string()
           .describe('Any stabling constraints for the train (related to accessibility).'),
+        reliabilityScore: z.number().describe('The reliability score of the train (0-100%).'),
       })
     )
     .describe('An array of train objects with their respective attributes.'),
@@ -78,6 +79,7 @@ const prompt = ai.definePrompt({
   Mileage: {{{mileage}}}
   Last Cleaning Date: {{{lastCleaningDate}}}
   Stabling Constraints (Accessibility): {{{stablingConstraints}}}
+  Reliability Score: {{{reliabilityScore}}}
   {{/each}}
 
   Rank the trains for induction, considering these factors:
@@ -88,6 +90,7 @@ const prompt = ai.definePrompt({
   - **Mileage:** Trains with lower mileage since their last induction should be ranked higher.
   - **Cleaning:** Trains that were cleaned more recently should be ranked higher.
   - **Accessibility (Stabling Constraints):** Trains with fewer stabling constraints should be ranked higher.
+  - **Reliability:** Trains with a higher reliability score should be ranked higher.
 
   Provide a clear explanation for the ranking of each train.
   Ensure that the output is a valid JSON object that conforms to the RankTrainsForInductionOutputSchema.`,
