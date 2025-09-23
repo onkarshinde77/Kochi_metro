@@ -32,6 +32,7 @@ export function PredictiveAlerts() {
   const handleSubmit = () => {
     startTransition(async () => {
       setError(null);
+      setAlerts([]);
       const result = await generatePredictiveAlerts({ trainComponentConditions: conditions });
       try {
         // The AI often returns a markdown block with JSON inside
@@ -77,7 +78,14 @@ export function PredictiveAlerts() {
         
         {alerts.length > 0 && (
           <div className="space-y-4">
-            <h3 className="font-semibold">Generated Alerts</h3>
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold">Generated Alerts</h3>
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5"><Badge variant="destructive" className="p-1"><AlertTriangle className="h-3 w-3" /></Badge> High: Immediate action required</div>
+                <div className="flex items-center gap-1.5"><Badge variant="secondary" className="bg-yellow-400 text-yellow-900 hover:bg-yellow-400/80 p-1"><AlertCircle className="h-3 w-3" /></Badge> Medium: Schedule maintenance soon</div>
+                <div className="flex items-center gap-1.5"><Badge variant="secondary" className="bg-green-400 text-green-900 hover:bg-green-400/80 p-1"><ShieldCheck className="h-3 w-3" /></Badge> Low: Monitor component</div>
+              </div>
+            </div>
             <div className="border rounded-lg">
                 {alerts.map((alert, index) => (
                     <div key={index} className={`p-4 space-y-2 ${index < alerts.length - 1 ? 'border-b' : ''}`}>
