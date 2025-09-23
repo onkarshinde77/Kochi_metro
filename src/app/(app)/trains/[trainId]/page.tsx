@@ -3,7 +3,7 @@ import { initialTrains } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { notFound } from 'next/navigation';
 import { Badge } from "@/components/ui/badge";
-import { FileText, SprayCan, Hand, Wrench, FileArchive, GanttChartSquare, Target, AlertTriangle, User, Phone, Mail } from "lucide-react";
+import { FileText, SprayCan, Hand, Wrench, FileArchive, GanttChartSquare, Target, AlertTriangle, User, Phone, Mail, CheckCircle2, Calendar, Clock, Users, Info, Building } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const isCertificateExpiringSoon = (expiryDate: string) => {
@@ -17,9 +17,14 @@ const isCertificateExpiringSoon = (expiryDate: string) => {
 const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
     <div className="flex justify-between py-2 border-b">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium text-right">{value}</span>
+        <span className="font-medium text-right text-sm">{value}</span>
     </div>
 );
+
+const formatDateTime = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+}
 
 
 export default function TrainDetailPage({ params }: { params: { trainId: string } }) {
@@ -30,7 +35,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
     notFound();
   }
 
-  const { branding } = train;
+  const { branding, cleaning } = train;
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
@@ -127,67 +132,67 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Certificates & Validity</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Fitness Certificate</span>
-               <span className={cn("font-medium", isCertificateExpiringSoon(train.fitnessCertificate.validUntil) && "text-destructive")}>
-                Expires {new Date(train.fitnessCertificate.validUntil).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Certificate Issuer</span>
-              <span className="font-medium">{train.fitnessCertificate.issuer}</span>
-            </div>
-             <div className="flex justify-between">
-              <span className="text-muted-foreground">Safety Certificate</span>
-               <span className={cn("font-medium", isCertificateExpiringSoon(train.safetyCertificate.expiry) && "text-destructive")}>
-                Expires {new Date(train.safetyCertificate.expiry).toLocaleDateString()}
-              </span>
-            </div>
+          <CardContent className="space-y-3">
+            <DetailRow label="Fitness Certificate" value={
+                <span className={cn("font-medium", isCertificateExpiringSoon(train.fitnessCertificate.validUntil) && "text-destructive")}>
+                    Expires {new Date(train.fitnessCertificate.validUntil).toLocaleDateString()}
+                </span>
+            } />
+            <DetailRow label="Certificate Issuer" value={train.fitnessCertificate.issuer} />
+            <DetailRow label="Safety Certificate" value={
+                 <span className={cn("font-medium", isCertificateExpiringSoon(train.safetyCertificate.expiry) && "text-destructive")}>
+                    Expires {new Date(train.safetyCertificate.expiry).toLocaleDateString()}
+                </span>
+            } />
           </CardContent>
         </Card>
 
         {/* Cleaning Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Hand className="h-5 w-5 text-primary" />Cleaning Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Status</span>
-              <Badge variant={train.cleaning.status === "Cleaned" ? "default" : "secondary"} className={train.cleaning.status === 'Cleaned' ? 'bg-green-600' : ''}>
-                {train.cleaning.status}
-              </Badge>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Last Cleaned On</span>
-              <span className="font-medium">{new Date(train.cleaning.lastCleaned).toLocaleDateString()}</span>
-            </div>
-          </CardContent>
+        <Card className="lg:col-span-2">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Hand className="h-5 w-5 text-primary" />Cleaning Information</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6 md:grid-cols-2">
+                <Card>
+                    <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Info className="h-4 w-4" />Task Details</CardTitle></CardHeader>
+                    <CardContent>
+                        <DetailRow label="Status" value={<Badge variant={cleaning.status === 'COMPLETED' ? 'default' : 'secondary'} className={cleaning.status === 'COMPLETED' ? 'bg-green-600' : (cleaning.status === 'IN_PROGRESS' ? 'bg-yellow-500 text-yellow-900' : '')}>{cleaning.status}</Badge>} />
+                        <DetailRow label="Bay ID" value={cleaning.bayId} />
+                        <DetailRow label="Cleaning Type" value={cleaning.cleaningType.replace('_', ' ')} />
+                        {cleaning.remarks && <DetailRow label="Remarks" value={cleaning.remarks} />}
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Calendar className="h-4 w-4" />Schedule & Execution</CardTitle></CardHeader>
+                    <CardContent>
+                        <DetailRow label="Scheduled Start" value={formatDateTime(cleaning.scheduledStart)} />
+                        <DetailRow label="Scheduled End" value={formatDateTime(cleaning.scheduledEnd)} />
+                        <DetailRow label="Actual Start" value={formatDateTime(cleaning.actualStart)} />
+                        <DetailRow label="Actual End" value={formatDateTime(cleaning.actualEnd)} />
+                        <DetailRow label="Last Updated" value={formatDateTime(cleaning.lastUpdated)} />
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Users className="h-4 w-4" />Team & Authorization</CardTitle></CardHeader>
+                    <CardContent>
+                        <DetailRow label="Assigned Team" value={cleaning.assignedTeamId} />
+                        <DetailRow label="Supervisor Override" value={cleaning.supervisorOverride ? <CheckCircle2 className="h-5 w-5 text-green-600" /> : <span className="text-muted-foreground">No</span>} />
+                    </CardContent>
+                </Card>
+            </CardContent>
         </Card>
+
 
         {/* Technical Specifications */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Wrench className="h-5 w-5 text-primary" />Technical Specifications</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Engine Type</span>
-              <span className="font-medium">{train.engineType}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Max Speed</span>
-              <span className="font-medium">{train.maxSpeed} km/h</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Coach Count</span>
-              <span className="font-medium">{train.coachCount}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Mileage</span>
-              <span className="font-medium">{train.mileage.toLocaleString()} km</span>
-            </div>
+          <CardContent className="space-y-3">
+             <DetailRow label="Engine Type" value={train.engineType} />
+             <DetailRow label="Max Speed" value={`${train.maxSpeed} km/h`} />
+             <DetailRow label="Coach Count" value={train.coachCount} />
+             <DetailRow label="Mileage" value={`${train.mileage.toLocaleString()} km`} />
           </CardContent>
         </Card>
       </div>

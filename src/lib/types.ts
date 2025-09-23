@@ -55,6 +55,30 @@ export type BrandingDetails = {
   contactPhone?: string;
 };
 
+export type CleaningDetails = {
+  // Bay & Task Info
+  bayId: string;
+  cleaningType: 'DEEP_CLEAN' | 'ROUTINE' | 'QUICK_WASH';
+  remarks?: string;
+
+  // Schedule & Execution
+  scheduledStart: string;
+  scheduledEnd: string;
+  actualStart?: string;
+  actualEnd?: string;
+
+  // Progress Tracking
+  status: 'IN_PROGRESS' | 'COMPLETED' | 'PENDING';
+  lastUpdated: string;
+  
+  // For backwards compatibility with older components
+  lastCleaned: string;
+
+  // Team & Authorization
+  assignedTeamId: string;
+  supervisorOverride: boolean;
+};
+
 
 export type Train = {
   // Identification
@@ -97,13 +121,10 @@ export type Train = {
     time: number; // in months
   };
   mileage: number; // Current Mileage
-  mileageThreshold: number; // Mileage Threshold before Inspection
+  mileageThreshold: number; // Mileage Threshold for Inspection
 
   // Other
-  cleaning: {
-    status: 'Cleaned' | 'Pending';
-    lastCleaned: string;
-  };
+  cleaning: CleaningDetails;
   branding: BrandingDetails;
   isElectric: true;
   engineType: string;

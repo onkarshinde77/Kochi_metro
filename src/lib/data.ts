@@ -1,4 +1,4 @@
-import type { Kpi, JobCard, Train, DepotLayout, BrandingDetails } from './types';
+import type { Kpi, JobCard, Train, DepotLayout, BrandingDetails, CleaningDetails } from './types';
 
 export const kpis: Kpi[] = [
   {
@@ -105,6 +105,28 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
     branding = { status: 'No' };
   }
 
+  const cleaningStatusOptions: CleaningDetails['status'][] = ['COMPLETED', 'PENDING', 'IN_PROGRESS'];
+  const cleaningTypeOptions: CleaningDetails['cleaningType'][] = ['DEEP_CLEAN', 'ROUTINE', 'QUICK_WASH'];
+  const now = new Date();
+  const scheduledStart = new Date(now.getTime() - Math.random() * 5 * 24 * 60 * 60 * 1000);
+  const scheduledEnd = new Date(scheduledStart.getTime() + (1 + Math.random()) * 60 * 60 * 1000); // 1-2 hours later
+
+  const cleaning: CleaningDetails = {
+      bayId: `Bay-0${(i%3) + 1}`,
+      cleaningType: cleaningTypeOptions[i % cleaningTypeOptions.length],
+      remarks: i % 7 === 0 ? "Extra attention to seat stains required." : undefined,
+      scheduledStart: scheduledStart.toISOString(),
+      scheduledEnd: scheduledEnd.toISOString(),
+      actualStart: i % 2 === 0 ? new Date(scheduledStart.getTime() + Math.random() * 15 * 60 * 1000).toISOString() : undefined,
+      actualEnd: i % 4 === 0 ? new Date(scheduledEnd.getTime() - Math.random() * 15 * 60 * 1000).toISOString() : undefined,
+      status: cleaningStatusOptions[i % cleaningStatusOptions.length],
+      lastUpdated: new Date(scheduledEnd.getTime() - Math.random() * 60 * 60 * 1000).toISOString(),
+      lastCleaned: new Date(Date.now() - (Math.random() * 10 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
+      assignedTeamId: `Team-${['A', 'B', 'C'][i%3]}`,
+      supervisorOverride: i % 10 === 0,
+  }
+
+
   return {
     id: trainId,
     model: 'Alstom Metropolis',
@@ -132,10 +154,7 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
     maintenanceInterval: { distance: 20000, time: 6 },
     mileage: Math.floor(Math.random() * 200000) + 5000,
     mileageThreshold: 150000,
-    cleaning: {
-      status: i % 3 === 0 ? 'Pending' : 'Cleaned',
-      lastCleaned: new Date(Date.now() - (Math.random() * 10 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
-    },
+    cleaning: cleaning,
     branding: branding,
     isElectric: true,
     engineType: 'AC Traction',
