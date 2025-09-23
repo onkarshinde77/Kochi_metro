@@ -45,7 +45,6 @@ export function LiveMap({ trains }: { trains: Train[] }) {
     setSelectedTrain(null);
   }, []);
 
-  if (!isLoaded) return <div className="flex items-center justify-center h-full">Loading Map...</div>;
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     return (
         <div className="flex items-center justify-center h-full bg-muted rounded-lg">
@@ -56,6 +55,8 @@ export function LiveMap({ trains }: { trains: Train[] }) {
         </div>
     );
   }
+  
+  if (!isLoaded) return <div className="flex items-center justify-center h-full">Loading Map...</div>;
 
   return (
     <GoogleMap
