@@ -4,8 +4,9 @@
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
 import { useState, useCallback } from 'react';
 import type { Train } from '@/lib/types';
-import { Train as TrainIcon } from 'lucide-react';
+import { Train as TrainIcon, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 const containerStyle = {
   width: '100%',
@@ -28,6 +29,55 @@ const getStatusColor = (status: Train['status']) => {
         default: return '#64748b'; // slate-500
     }
 }
+
+// A simple placeholder map when API key is not available
+const TemporaryMap = ({ trains }: { trains: Train[] }) => {
+  const operationalTrains = trains.filter(t => t.status === 'Operational');
+  const depotTrains = trains.filter(t => t.status !== 'Operational');
+
+  return (
+    <div className="h-full w-full bg-gray-200 rounded-lg p-4 flex flex-col justify-center items-center">
+        <div className="w-full h-full relative">
+            {/* Metro Line */}
+            <div className="absolute top-1/2 left-0 w-full h-1.5 bg-primary rounded-full -translate-y-1/2"></div>
+            
+            {/* Stations */}
+            <div className="absolute top-1/2 left-[5%] -translate-x-1/2 -translate-y-1/2 text-center">
+                <MapPin className="h-5 w-5 text-primary-foreground fill-primary mx-auto" />
+                <span className="text-xs font-semibold">Aluva</span>
+            </div>
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                <MapPin className="h-5 w-5 text-primary-foreground fill-primary mx-auto" />
+                <span className="text-xs font-semibold">Muttom Yard</span>
+            </div>
+             <div className="absolute top-1/2 right-[5%] -translate-x-1/2 -translate-y-1/2 text-center">
+                <MapPin className="h-5 w-5 text-primary-foreground fill-primary mx-auto" />
+                <span className="text-xs font-semibold">Thykoodam</span>
+            </div>
+
+            {/* Operational Trains */}
+            {operationalTrains.map((train, index) => (
+                <div key={train.id} className="absolute top-1/2 -translate-y-full transition-all duration-500" style={{ left: `${10 + (80 / (operationalTrains.length + 1)) * (index + 1)}%` }}>
+                    <div className="flex flex-col items-center">
+                        <TrainIcon className="h-8 w-8" style={{ color: getStatusColor(train.status) }} />
+                        <Badge className="text-xs" style={{ backgroundColor: getStatusColor(train.status), color: 'white' }}>{train.id}</Badge>
+                    </div>
+                </div>
+            ))}
+        </div>
+        <div className="w-full mt-4 p-4 bg-muted/50 rounded-lg">
+            <h4 className="font-bold text-center mb-2">Depot Status (Muttom Yard)</h4>
+            <div className="flex flex-wrap gap-2 justify-center">
+                 {depotTrains.map(train => (
+                     <Badge key={train.id} className="text-xs" style={{ backgroundColor: getStatusColor(train.status), color: 'white' }}>{train.id}</Badge>
+                 ))}
+            </div>
+        </div>
+         <p className="text-xs text-muted-foreground mt-2 text-center w-full">This is a temporary visualization. Add a Google Maps API key for a live, interactive map.</p>
+    </div>
+  );
+};
+
 
 function MapComponent({ trains, apiKey }: { trains: Train[], apiKey: string }) {
     const { isLoaded } = useJsApiLoader({
@@ -94,14 +144,7 @@ export function LiveMap({ trains }: { trains: Train[] }) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
   if (!apiKey) {
-    return (
-        <div className="flex items-center justify-center h-full bg-muted rounded-lg">
-            <div className="text-center text-muted-foreground p-4">
-                <h3 className="font-semibold text-lg">Google Maps API Key is missing.</h3>
-                <p className="text-sm">Please add your API key to an environment file to display the map.</p>
-            </div>
-        </div>
-    );
+    return <TemporaryMap trains={trains} />;
   }
   
   return <MapComponent trains={trains} apiKey={apiKey} />;
