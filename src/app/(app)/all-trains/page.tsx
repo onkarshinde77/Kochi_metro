@@ -27,7 +27,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
       return [...prevTrains, ...newTrains];
     });
   }, [extraTrains]);
-
+  
   const filteredTrains = allTrains.filter(train => {
     const statusMatch = statusFilter === 'all' || train.status === statusFilter;
     const searchMatch = train.id.toLowerCase().includes(searchTerm.toLowerCase());
