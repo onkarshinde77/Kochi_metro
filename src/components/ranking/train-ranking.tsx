@@ -20,45 +20,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { initialTrains as allTrains } from "@/lib/data";
 
-const initialTrains = [
-  {
-    trainId: "T-004",
-    fitnessCertificateStatus: "Valid",
+const trainsForRanking = allTrains.map(train => ({
+    trainId: train.id,
+    fitnessCertificateStatus: Math.random() > 0.2 ? "Valid" : "Expired",
     jobCardStatus: "Completed",
-    brandingPriority: 8,
-    mileage: 12500,
-    lastCleaningDate: "2024-07-25",
-    stablingConstraints: "None",
-  },
-  {
-    trainId: "T-011",
-    fitnessCertificateStatus: "Valid",
-    jobCardStatus: "Open",
-    brandingPriority: 5,
-    mileage: 8000,
-    lastCleaningDate: "2024-07-28",
-    stablingConstraints: "None",
-  },
-  {
-    trainId: "T-002",
-    fitnessCertificateStatus: "Expired",
-    jobCardStatus: "Completed",
-    brandingPriority: 7,
-    mileage: 25000,
-    lastCleaningDate: "2024-07-20",
-    stablingConstraints: "Height restriction on track 5",
-  },
-  {
-    trainId: "T-009",
-    fitnessCertificateStatus: "Valid",
-    jobCardStatus: "Completed",
-    brandingPriority: 9,
-    mileage: 500,
-    lastCleaningDate: "2024-07-29",
-    stablingConstraints: "None",
-  },
-];
+    brandingPriority: Math.floor(Math.random() * 10) + 1,
+    mileage: train.mileage,
+    lastCleaningDate: new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    stablingConstraints: Math.random() > 0.8 ? "Platform length restriction" : "None"
+}))
+
 
 type RankedTrain = {
   trainId: string;
@@ -72,14 +45,10 @@ export function TrainRanking() {
 
   const handleRanking = () => {
     startTransition(async () => {
-      const result = await rankTrainsForInduction({ trains: initialTrains });
+      const result = await rankTrainsForInduction({ trains: trainsForRanking });
       setRankedTrains(result.rankedTrains);
     });
   };
-
-  const getTrainDetails = (trainId: string) => {
-    return initialTrains.find((t) => t.trainId === trainId);
-  }
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -87,41 +56,43 @@ export function TrainRanking() {
         <CardHeader>
           <CardTitle>Available Trains for Induction</CardTitle>
           <CardDescription>
-            Current status of trains awaiting induction decision.
+            Current status of all trains in the fleet awaiting induction decision.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Train ID</TableHead>
-                <TableHead>Fitness Cert.</TableHead>
-                <TableHead>Branding Prio.</TableHead>
-                <TableHead>Mileage</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {initialTrains.map((train) => (
-                <TableRow key={train.trainId}>
-                  <TableCell className="font-medium">{train.trainId}</TableCell>
-                  <TableCell>
-                    <Badge variant={train.fitnessCertificateStatus === 'Valid' ? 'default' : 'destructive'} className={train.fitnessCertificateStatus === 'Valid' ? 'bg-green-600' : ''}>
-                        {train.fitnessCertificateStatus}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{train.brandingPriority}</TableCell>
-                  <TableCell>{train.mileage.toLocaleString()} km</TableCell>
+          <div className="max-h-[400px] overflow-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Train ID</TableHead>
+                  <TableHead>Fitness Cert.</TableHead>
+                  <TableHead>Branding Prio.</TableHead>
+                  <TableHead>Mileage</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {trainsForRanking.map((train) => (
+                  <TableRow key={train.trainId}>
+                    <TableCell className="font-medium">{train.trainId}</TableCell>
+                    <TableCell>
+                      <Badge variant={train.fitnessCertificateStatus === 'Valid' ? 'default' : 'destructive'} className={train.fitnessCertificateStatus === 'Valid' ? 'bg-green-600' : ''}>
+                          {train.fitnessCertificateStatus}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{train.brandingPriority}</TableCell>
+                    <TableCell>{train.mileage.toLocaleString()} km</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
           <Button onClick={handleRanking} disabled={isPending} className="mt-4 w-full">
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Wand2 className="mr-2 h-4 w-4" />
             )}
-            Generate Induction Rank
+            Generate Induction Rank for All Trains
           </Button>
         </CardContent>
       </Card>
@@ -135,10 +106,10 @@ export function TrainRanking() {
         </CardHeader>
         <CardContent>
             {rankedTrains.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[500px] overflow-auto pr-4">
                     {rankedTrains.map((train, index) => (
                          <div key={index} className="flex items-start gap-4">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-lg">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-lg shrink-0">
                                 {train.rank}
                             </div>
                             <div className="flex-1">

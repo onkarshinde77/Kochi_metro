@@ -30,7 +30,7 @@ const RankTrainsForInductionInputSchema = z.object({
         lastCleaningDate: z.string().describe('The last cleaning date of the train.'),
         stablingConstraints: z
           .string()
-          .describe('Any stabling constraints for the train.'),
+          .describe('Any stabling constraints for the train (related to accessibility).'),
       })
     )
     .describe('An array of train objects with their respective attributes.'),
@@ -66,7 +66,7 @@ const prompt = ai.definePrompt({
   name: 'rankTrainsForInductionPrompt',
   input: {schema: RankTrainsForInductionInputSchema},
   output: {schema: RankTrainsForInductionOutputSchema},
-  prompt: `You are a fleet manager responsible for ranking trains for induction based on several factors.
+  prompt: `You are a fleet manager responsible for ranking electric metro trains for induction based on several factors.
 
   Given the following trains and their attributes:
 
@@ -77,20 +77,20 @@ const prompt = ai.definePrompt({
   Branding Priority: {{{brandingPriority}}}
   Mileage: {{{mileage}}}
   Last Cleaning Date: {{{lastCleaningDate}}}
- Stabling Constraints: {{{stablingConstraints}}}
+  Stabling Constraints (Accessibility): {{{stablingConstraints}}}
   {{/each}}
 
   Rank the trains for induction, considering these factors:
 
-  - **Fitness Certificate Status:** Trains with valid certificates should be ranked higher.
-  - **Job Card Status:** Trains with completed job cards should be ranked higher.
+  - **Fitness & Certificate Status:** Trains with valid certificates should be ranked higher.
+  - **Maintenance (Job Card Status):** Trains with completed job cards should be ranked higher.
   - **Branding Priority:** Trains with higher branding priority should be ranked higher.
   - **Mileage:** Trains with lower mileage since their last induction should be ranked higher.
-  - **Last Cleaning Date:** Trains that were cleaned more recently should be ranked higher.
-  - **Stabling Constraints**: Trains with fewer stabling constraints should be ranked higher.
+  - **Cleaning:** Trains that were cleaned more recently should be ranked higher.
+  - **Accessibility (Stabling Constraints):** Trains with fewer stabling constraints should be ranked higher.
 
   Provide a clear explanation for the ranking of each train.
-  Ensure that the output is a valid JSON object that conforms to the RankTrainsForInductionOutputSchema.`, // Added schema name for clarity
+  Ensure that the output is a valid JSON object that conforms to the RankTrainsForInductionOutputSchema.`,
 });
 
 const rankTrainsForInductionFlow = ai.defineFlow(
