@@ -29,10 +29,10 @@ const getStatusColor = (status: Train['status']) => {
     }
 }
 
-function MapComponent({ trains }: { trains: Train[] }) {
+function MapComponent({ trains, apiKey }: { trains: Train[], apiKey: string }) {
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        googleMapsApiKey: apiKey,
     });
 
     const [selectedTrain, setSelectedTrain] = useState<Train | null>(null);
@@ -91,18 +91,18 @@ function MapComponent({ trains }: { trains: Train[] }) {
 
 
 export function LiveMap({ trains }: { trains: Train[] }) {
-  const hasApiKey = !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-  if (!hasApiKey) {
+  if (!apiKey) {
     return (
         <div className="flex items-center justify-center h-full bg-muted rounded-lg">
             <div className="text-center text-muted-foreground p-4">
                 <h3 className="font-semibold text-lg">Google Maps API Key is missing.</h3>
-                <p className="text-sm">Please add your API key to the `.env.local` file to display the map.</p>
+                <p className="text-sm">Please add your API key to an environment file to display the map.</p>
             </div>
         </div>
     );
   }
   
-  return <MapComponent trains={trains} />;
+  return <MapComponent trains={trains} apiKey={apiKey} />;
 }
