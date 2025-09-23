@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { rankTrainsForInduction } from "@/ai/flows/rank-trains-for-induction";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles, Wand2 } from "lucide-react";
@@ -21,17 +22,17 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { initialTrains as allTrains } from "@/lib/data";
+import type { Train } from "@/lib/types";
 
-const trainsForRanking = allTrains.map(train => ({
-    trainId: train.id,
-    fitnessCertificateStatus: Math.random() > 0.2 ? "Valid" : "Expired",
-    jobCardStatus: "Completed",
-    brandingPriority: Math.floor(Math.random() * 10) + 1,
-    mileage: train.mileage,
-    lastCleaningDate: new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    stablingConstraints: Math.random() > 0.8 ? "Platform length restriction" : "None"
-}))
-
+type TrainForRanking = {
+    trainId: string;
+    fitnessCertificateStatus: string;
+    jobCardStatus: string;
+    brandingPriority: number;
+    mileage: number;
+    lastCleaningDate: string;
+    stablingConstraints: string;
+}
 
 type RankedTrain = {
   trainId: string;
@@ -42,6 +43,22 @@ type RankedTrain = {
 export function TrainRanking() {
   const [isPending, startTransition] = useTransition();
   const [rankedTrains, setRankedTrains] = useState<RankedTrain[]>([]);
+  const [trainsForRanking, setTrainsForRanking] = useState<TrainForRanking[]>([]);
+
+  useEffect(() => {
+    // Generate random data on the client side to prevent hydration errors
+    const generatedTrains = allTrains.map(train => ({
+        trainId: train.id,
+        fitnessCertificateStatus: Math.random() > 0.2 ? "Valid" : "Expired",
+        jobCardStatus: "Completed",
+        brandingPriority: Math.floor(Math.random() * 10) + 1,
+        mileage: train.mileage,
+        lastCleaningDate: new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        stablingConstraints: Math.random() > 0.8 ? "Platform length restriction" : "None"
+    }));
+    setTrainsForRanking(generatedTrains);
+  }, []);
+
 
   const handleRanking = () => {
     startTransition(async () => {
@@ -86,7 +103,7 @@ export function TrainRanking() {
               </TableBody>
             </Table>
           </div>
-          <Button onClick={handleRanking} disabled={isPending} className="mt-4 w-full">
+          <Button onClick={handleRanking} disabled={isPending || trainsForRanking.length === 0} className="mt-4 w-full">
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -121,9 +138,13 @@ export function TrainRanking() {
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-64 border-2 border-dashed rounded-lg">
-                    <Sparkles className="h-10 w-10 mb-2"/>
-                    <p className="font-semibold">Ranking results will appear here</p>
-                    <p className="text-sm">Click the button to generate the ranking.</p>
+                    {trainsForRanking.length === 0 ? (
+                      <Loader2 className="h-10 w-10 animate-spin mb-2" />
+                    ) : (
+                      <Sparkles className="h-10 w-10 mb-2"/>
+                    )}
+                    <p className="font-semibold">{trainsForRanking.length === 0 ? 'Generating train data...' : 'Ranking results will appear here'}</p>
+                    <p className="text-sm">{trainsForRanking.length === 0 ? 'Please wait a moment.' : 'Click the button to generate the ranking.'}</p>
                 </div>
             )}
         </CardContent>
