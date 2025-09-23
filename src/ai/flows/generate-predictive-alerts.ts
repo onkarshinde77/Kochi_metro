@@ -26,7 +26,7 @@ const GeneratePredictiveAlertsOutputSchema = z.object({
   predictiveAlerts: z
     .string()
     .describe(
-      'A list of predictive maintenance alerts, each including the affected component, a risk score (0-100), and recommended actions.'
+      'A JSON array of predictive maintenance alerts, each including the affected component, a risk score (0-100), and recommended actions.'
     ),
 });
 export type GeneratePredictiveAlertsOutput = z.infer<
@@ -51,7 +51,7 @@ const prompt = ai.definePrompt({
   {{trainComponentConditions}}
 
   For each alert, include the affected component, a risk score (0-100), and recommended actions.
-  IMPORTANT: Your response MUST be a valid JSON array of objects and nothing else. Do not include any explanatory text or markdown formatting.
+  IMPORTANT: Your response MUST be a valid JSON array of objects and nothing else. Do not include any explanatory text or markdown formatting. The output must be parsable by JSON.parse().
   `,
 });
 
