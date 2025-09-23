@@ -107,15 +107,13 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   asChild
                   href="/trains/add"
-                  variant="ghost"
-                  className="text-muted-foreground w-full justify-start"
                   tooltip={{
-                    children: "Add Train",
+                    children: "Add New Metro",
                   }}
                 >
                   <Link href="/trains/add">
                     <PlusCircle />
-                    <span>Add Train</span>
+                    <span>Add New Metro</span>
                   </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>

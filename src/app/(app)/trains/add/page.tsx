@@ -109,8 +109,8 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
     }
 
     toast({
-      title: "Train Added",
-      description: `Train ${data.id} has been successfully added to the fleet.`,
+      title: "Metro Added",
+      description: `Metro ${data.id} has been successfully added to the fleet.`,
     });
     router.push('/tracking');
   }
@@ -118,10 +118,10 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
        <div className="flex items-center justify-between space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Add New Train</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Add New Metro</h1>
       </div>
        <p className="text-muted-foreground">
-        Enter the details for the new train to add it to the fleet.
+        Enter the details for the new metro to add it to the fleet.
       </p>
 
       <Form {...form}>
@@ -130,7 +130,7 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Identification</CardTitle>
-                <CardDescription>Basic identification details for the train.</CardDescription>
+                <CardDescription>Basic identification details for the metro.</CardDescription>
               </CardHeader>
               <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <FormField control={form.control} name="id" render={({ field }) => (
@@ -253,7 +253,7 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
           <div className="flex justify-end gap-2">
              <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Adding..." : "Add Train to Fleet"}
+              {form.formState.isSubmitting ? "Adding..." : "Add Metro to Fleet"}
             </Button>
           </div>
         </form>
