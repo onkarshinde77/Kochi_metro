@@ -68,7 +68,7 @@ export function TrainCard({ train }: { train: Train }) {
       </CardContent>
       <CardFooter>
         <Button asChild variant="secondary" className="w-full">
-            <Link href={`/job-cards/${train.id}`}>View Details</Link>
+            <Link href={`/trains/${train.id}`}>View Details</Link>
         </Button>
       </CardFooter>
     </Card>
