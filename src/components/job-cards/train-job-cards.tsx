@@ -22,11 +22,13 @@ export function TrainJobCards() {
   const [filter, setFilter] = useState<FilterValue>('open');
 
   const getOpenJobsCount = (trainId: string) => {
-    return currentJobCards.filter(job => job.trainId === trainId && job.status !== 'Completed').length;
+    const allJobs = [...currentJobCards, ...pastJobCards];
+    return allJobs.filter(job => job.trainId === trainId && job.status !== 'Completed').length;
   };
   
   const getCompletedJobsCount = (trainId: string) => {
-      return pastJobCards.filter(job => job.trainId === trainId).length;
+      const allJobs = [...currentJobCards, ...pastJobCards];
+      return allJobs.filter(job => job.trainId === trainId && job.status === 'Completed').length;
   }
 
   const getFilteredTrains = (): TrainType[] => {
@@ -36,7 +38,7 @@ export function TrainJobCards() {
       case 'none':
         return initialTrains.filter(train => getOpenJobsCount(train.id) === 0);
       case 'completed':
-          return initialTrains.filter(train => getCompletedJobsCount(train.id) > 0);
+          return initialTrains.filter(train => getCompletedJobsCount(train.id) > 0 && getOpenJobsCount(train.id) === 0);
       case 'all':
       default:
         return initialTrains;
