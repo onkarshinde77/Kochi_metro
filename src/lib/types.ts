@@ -24,6 +24,7 @@ export type Train = {
   status: 'Operational' | 'Maintenance' | 'Idle' | 'Washing';
   currentTrack: string;
   mileage: number;
+  isElectric: true;
 };
 
 export type Track = {
