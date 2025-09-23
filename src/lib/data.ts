@@ -50,6 +50,8 @@ export const currentJobCards: JobCard[] = [
   { id: 'JC-002', trainId: 'T-007', task: 'Brake pad replacement', status: 'In Progress', assignedTo: 'Priya Singh', createdDate: '2024-07-28' },
   { id: 'JC-003', trainId: 'T-001', task: 'Interior deep clean', status: 'Pending', assignedTo: 'Cleaning Crew', createdDate: '2024-07-29' },
   { id: 'JC-004', trainId: 'T-012', task: 'Diagnostic check', status: 'Blocked', assignedTo: 'Amit Patel', createdDate: '2024-07-27' },
+  { id: 'JC-005', trainId: 'T-019', task: 'Pantograph inspection', status: 'In Progress', assignedTo: 'Priya Singh', createdDate: '2024-07-29' },
+  { id: 'JC-006', trainId: 'T-014', task: 'Wheel alignment', status: 'Pending', assignedTo: 'Amit Patel', createdDate: '2024-07-29' },
 ];
 
 export const pastJobCards: JobCard[] = [
@@ -57,6 +59,10 @@ export const pastJobCards: JobCard[] = [
   { id: 'JC-102', trainId: 'T-002', task: 'Pantograph inspection', status: 'Completed', assignedTo: 'Priya Singh', createdDate: '2024-07-24' },
   { id: 'JC-103', trainId: 'T-009', task: 'Wheel alignment', status: 'Completed', assignedTo: 'Amit Patel', createdDate: '2024-07-23' },
   { id: 'JC-104', trainId: 'T-006', task: 'Software update', status: 'Completed', assignedTo: 'Anjali Sharma', createdDate: '2024-07-22' },
+  { id: 'JC-105', trainId: 'T-001', task: 'Graffiti removal', status: 'Completed', assignedTo: 'Cleaning Crew', createdDate: '2024-07-20' },
+  { id: 'JC-106', trainId: 'T-003', task: 'Door sensor calibration', status: 'Completed', assignedTo: 'Rajesh Kumar', createdDate: '2024-07-19' },
+  { id: 'JC-107', trainId: 'T-007', task: 'Annual safety check', status: 'Completed', assignedTo: 'Priya Singh', createdDate: '2024-07-18' },
+  { id: 'JC-108', trainId: 'T-015', task: 'Battery replacement', status: 'Completed', assignedTo: 'Suresh Gupta', createdDate: '2024-07-21' },
 ];
 
 export const initialTrains: Train[] = [

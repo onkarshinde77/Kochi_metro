@@ -1,4 +1,4 @@
-import { JobCardsTable } from "@/components/job-cards/job-cards-table";
+import { TrainJobCards } from "@/components/job-cards/train-job-cards";
 
 export default function JobCardsPage() {
   return (
@@ -7,9 +7,9 @@ export default function JobCardsPage() {
         <h1 className="text-3xl font-bold tracking-tight">Job Card Management</h1>
       </div>
        <p className="text-muted-foreground">
-        View and manage all current and past job cards for the fleet.
+        A train-centric view of all maintenance tasks. Click on a train to see its job cards.
       </p>
-      <JobCardsTable />
+      <TrainJobCards />
     </div>
   );
 }
