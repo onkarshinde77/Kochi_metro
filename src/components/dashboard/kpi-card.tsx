@@ -8,7 +8,7 @@ export function KpiCard({ kpi }: { kpi: Kpi }) {
   const isIncrease = kpi.changeType === 'increase';
 
   const cardContent = (
-    <Card className="hover:border-primary transition-colors">
+    <Card className="hover:border-primary transition-colors h-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
         <svg
@@ -48,7 +48,7 @@ export function KpiCard({ kpi }: { kpi: Kpi }) {
       ? '/tracking' 
       : `/tracking?status=${kpi.filterValue}`;
     return (
-      <Link href={href}>
+      <Link href={href} className="h-full">
         {cardContent}
       </Link>
     );
