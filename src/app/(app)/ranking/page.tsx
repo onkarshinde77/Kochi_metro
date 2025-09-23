@@ -1,4 +1,6 @@
-import TrainRankingClient from '@/components/ranking/train-ranking-client';
+// src/app/(app)/ranking/page.tsx
+"use client";
+import { TrainRanking } from '@/components/ranking/train-ranking';
 
 export default function RankingPage() {
   return (
@@ -9,7 +11,7 @@ export default function RankingPage() {
       <p className="text-muted-foreground">
         Use the AI-powered optimizer to rank available trains for induction based on multiple factors.
       </p>
-      <TrainRankingClient />
+      <TrainRanking />
     </div>
   );
 }
