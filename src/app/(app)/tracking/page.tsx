@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import type { Train } from "@/lib/types";
 
-function TrackingPageContent({ extraTrains }: { extraTrains?: Train[] }) {
+function TrackingPageContent({ extraTrains, onAddTrain }: { extraTrains?: Train[], onAddTrain: (train: Train) => void }) {
   const searchParams = useSearchParams();
   const status = searchParams.get('status');
   
@@ -18,15 +18,15 @@ function TrackingPageContent({ extraTrains }: { extraTrains?: Train[] }) {
       <p className="text-muted-foreground">
         Real-time overview of the entire fleet's status and location.
       </p>
-      <TrainTracker initialStatusFilter={status} extraTrains={extraTrains || []} />
+      <TrainTracker initialStatusFilter={status} extraTrains={extraTrains || []} onAddTrain={onAddTrain} />
     </div>
   );
 }
 
-export default function TrackingPage({ extraTrains }: { extraTrains?: Train[] }) {
+export default function TrackingPage({ extraTrains, onAddTrain }: { extraTrains?: Train[], onAddTrain: (train: Train) => void }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <TrackingPageContent extraTrains={extraTrains} />
+      <TrackingPageContent extraTrains={extraTrains} onAddTrain={onAddTrain} />
     </Suspense>
   );
 }

@@ -33,27 +33,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import type { Train } from "@/lib/types";
 
 const menuItems = [
   {
@@ -88,77 +67,8 @@ const menuItems = [
   },
 ];
 
-const statusOptions: Train['status'][] = ['Operational', 'Maintenance', 'Idle', 'Washing'];
-
-function AddTrainForm({ onAddTrain, closeDialog }: { onAddTrain: (train: Train) => void; closeDialog: () => void; }) {
-  const [newTrain, setNewTrain] = useState({
-    id: "",
-    status: "Idle" as Train['status'],
-    currentTrack: "",
-    mileage: ""
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTrain.id || !newTrain.currentTrack || !newTrain.mileage) {
-        // Simple validation
-        alert("Please fill all fields");
-        return;
-    }
-    onAddTrain({
-        ...newTrain,
-        mileage: Number(newTrain.mileage),
-        isElectric: true
-    });
-    closeDialog();
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-            <Label htmlFor="id">Train ID</Label>
-            <Input id="id" value={newTrain.id} onChange={(e) => setNewTrain({...newTrain, id: e.target.value})} placeholder="e.g., T-026" />
-        </div>
-         <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <Select value={newTrain.status} onValueChange={(value) => setNewTrain({...newTrain, status: value as Train['status']})}>
-                <SelectTrigger id="status">
-                    <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                    {statusOptions.map(status => (
-                        <SelectItem key={status} value={status}>{status}</SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="currentTrack">Current Location</Label>
-            <Input id="currentTrack" value={newTrain.currentTrack} onChange={(e) => setNewTrain({...newTrain, currentTrack: e.target.value})} placeholder="e.g., SL4" />
-        </div>
-        <div className="space-y-2">
-            <Label htmlFor="mileage">Mileage (km)</Label>
-            <Input id="mileage" type="number" value={newTrain.mileage} onChange={(e) => setNewTrain({...newTrain, mileage: e.target.value})} placeholder="e.g., 50000" />
-        </div>
-      </div>
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button type="button" variant="secondary">
-            Cancel
-          </Button>
-        </DialogClose>
-        <Button type="submit">Add Train</Button>
-      </DialogFooter>
-    </form>
-  )
-}
-
-export function AppSidebar({ onAddTrain }: { onAddTrain: (train: Train) => void }) {
+export function AppSidebar() {
   const pathname = usePathname();
-  const [isAddTrainOpen, setIsAddTrainOpen] = useState(false);
 
   return (
     <>
@@ -194,20 +104,20 @@ export function AppSidebar({ onAddTrain }: { onAddTrain: (train: Train) => void 
             </SidebarMenuItem>
           ))}
             <SidebarMenuItem>
-                 <Dialog open={isAddTrainOpen} onOpenChange={setIsAddTrainOpen}>
-                    <DialogTrigger asChild>
-                        <SidebarMenuButton variant="ghost" className="text-muted-foreground w-full justify-start">
-                            <PlusCircle />
-                            <span>Add Train</span>
-                        </SidebarMenuButton>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Add New Train</DialogTitle>
-                        </DialogHeader>
-                        <AddTrainForm onAddTrain={onAddTrain} closeDialog={() => setIsAddTrainOpen(false)} />
-                    </DialogContent>
-                </Dialog>
+                <SidebarMenuButton
+                  asChild
+                  href="/trains/add"
+                  variant="ghost"
+                  className="text-muted-foreground w-full justify-start"
+                  tooltip={{
+                    children: "Add Train",
+                  }}
+                >
+                  <Link href="/trains/add">
+                    <PlusCircle />
+                    <span>Add Train</span>
+                  </Link>
+                </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>

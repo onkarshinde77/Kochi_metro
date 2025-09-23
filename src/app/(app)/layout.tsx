@@ -17,7 +17,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <Sidebar>
-        <AppSidebar onAddTrain={handleAddTrain} />
+        <AppSidebar />
       </Sidebar>
       <SidebarInset>
         <header className="flex items-center p-4 border-b">
@@ -26,7 +26,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {React.Children.map(children, child => {
           if (React.isValidElement(child)) {
             // @ts-ignore
-            return React.cloneElement(child, { extraTrains });
+            return React.cloneElement(child, { extraTrains, onAddTrain: handleAddTrain });
           }
           return child;
         })}

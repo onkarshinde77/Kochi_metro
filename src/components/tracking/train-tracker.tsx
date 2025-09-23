@@ -70,6 +70,10 @@ const columns: ColumnDef<Train>[] = [
     cell: ({ row }) => <div className="font-medium pl-4">{row.getValue("id")}</div>,
   },
   {
+    accessorKey: "model",
+    header: "Model",
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => getStatusBadge(row.getValue("status")),
@@ -110,7 +114,11 @@ export function TrainTracker({ initialStatusFilter, extraTrains }: { initialStat
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
   React.useEffect(() => {
-    setData([...initialTrains, ...extraTrains]);
+    setData(prevData => {
+        const existingIds = new Set(prevData.map(t => t.id));
+        const newTrains = extraTrains.filter(t => !existingIds.has(t.id));
+        return [...prevData, ...newTrains];
+    });
   }, [extraTrains]);
 
   const table = useReactTable({
@@ -128,6 +136,11 @@ export function TrainTracker({ initialStatusFilter, extraTrains }: { initialStat
       columnFilters,
       columnVisibility,
     },
+    meta: {
+        addRow: (newRow: Train) => {
+            setData(prev => [...prev, newRow]);
+        }
+    }
   });
 
   const handleStatusFilterChange = (value: string) => {
