@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -8,10 +10,20 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { JobCard } from "@/lib/types";
-import { Paperclip } from "lucide-react";
+import { Paperclip, BellRing } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export function JobCardsTable({ jobs, trainMileage }: { jobs: JobCard[], trainMileage: number }) {
+  const { toast } = useToast();
+
+  const handleSendAlert = (job: JobCard) => {
+    toast({
+      title: "Alert Sent!",
+      description: `An alert has been sent for job ${job.id} on train ${job.trainId}.`,
+    });
+  };
 
   const getStatusBadge = (status: JobCard['status']) => {
     switch(status) {
@@ -46,6 +58,7 @@ export function JobCardsTable({ jobs, trainMileage }: { jobs: JobCard[], trainMi
           <TableHead>Supervisor</TableHead>
           <TableHead>Expected Completion</TableHead>
           <TableHead>Attachments</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -67,6 +80,14 @@ export function JobCardsTable({ jobs, trainMileage }: { jobs: JobCard[], trainMi
               ) : (
                 <span className="text-muted-foreground">None</span>
               )}
+            </TableCell>
+            <TableCell>
+              {job.priority === 'High' && job.status !== 'Completed' ? (
+                <Button variant="outline" size="sm" onClick={() => handleSendAlert(job)}>
+                  <BellRing className="mr-2 h-4 w-4" />
+                  Send Alert
+                </Button>
+              ) : null}
             </TableCell>
           </TableRow>
         ))}
