@@ -14,17 +14,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -40,6 +36,14 @@ import { Badge } from "@/components/ui/badge";
 import { initialTrains } from "@/lib/data";
 import type { Train } from "@/lib/types";
 import { Card, CardContent } from "../ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "../ui/label";
 
 const getStatusBadge = (status: Train['status']) => {
     switch (status) {
@@ -69,6 +73,9 @@ const columns: ColumnDef<Train>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => getStatusBadge(row.getValue("status")),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
     accessorKey: "currentTrack",
@@ -92,10 +99,14 @@ const columns: ColumnDef<Train>[] = [
   },
 ];
 
-export function TrainTracker() {
+const statusOptions: Train['status'][] = ['Operational', 'Maintenance', 'Idle', 'Washing'];
+
+export function TrainTracker({ initialStatusFilter }: { initialStatusFilter: string | null }) {
   const [data, setData] = React.useState<Train[]>(initialTrains);
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    initialStatusFilter ? [{ id: 'status', value: [initialStatusFilter] }] : []
+  );
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
   const table = useReactTable({
@@ -115,44 +126,68 @@ export function TrainTracker() {
     },
   });
 
+  const handleStatusFilterChange = (value: string) => {
+    if (value === 'all') {
+      table.getColumn('status')?.setFilterValue(undefined);
+    } else {
+      table.getColumn('status')?.setFilterValue([value]);
+    }
+  };
+
+  const currentStatusFilter = (table.getColumn('status')?.getFilterValue() as string[] | undefined)?.[0] ?? 'all';
+
   return (
     <Card>
       <CardContent className="p-4">
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <div className="flex items-center py-4 gap-4">
                 <Input
-                placeholder="Filter by Train ID..."
-                value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
-                onChange={(event) =>
-                    table.getColumn("id")?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm"
+                  placeholder="Filter by Train ID..."
+                  value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
+                  onChange={(event) =>
+                      table.getColumn("id")?.setFilterValue(event.target.value)
+                  }
+                  className="max-w-xs"
                 />
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="status-filter">Status:</Label>
+                  <Select value={currentStatusFilter} onValueChange={handleStatusFilterChange}>
+                    <SelectTrigger id="status-filter" className="w-[180px]">
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      {statusOptions.map(status => (
+                        <SelectItem key={status} value={status}>{status}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="ml-auto">
-                    Columns <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    {table
-                    .getAllColumns()
-                    .filter((column) => column.getCanHide())
-                    .map((column) => {
-                        return (
-                        <DropdownMenuCheckboxItem
-                            key={column.id}
-                            className="capitalize"
-                            checked={column.getIsVisible()}
-                            onCheckedChange={(value) =>
-                            column.toggleVisibility(!!value)
-                            }
-                        >
-                            {column.id}
-                        </DropdownMenuCheckboxItem>
-                        );
-                    })}
-                </DropdownMenuContent>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="ml-auto">
+                      Columns <ChevronDown className="ml-2 h-4 w-4" />
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                      {table
+                      .getAllColumns()
+                      .filter((column) => column.getCanHide())
+                      .map((column) => {
+                          return (
+                          <DropdownMenuCheckboxItem
+                              key={column.id}
+                              className="capitalize"
+                              checked={column.getIsVisible()}
+                              onCheckedChange={(value) =>
+                              column.toggleVisibility(!!value)
+                              }
+                          >
+                              {column.id === 'id' ? 'Train ID' : column.id}
+                          </DropdownMenuCheckboxItem>
+                          );
+                      })}
+                  </DropdownMenuContent>
                 </DropdownMenu>
             </div>
             <div className="rounded-md border">

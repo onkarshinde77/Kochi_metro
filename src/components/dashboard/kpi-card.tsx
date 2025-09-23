@@ -2,11 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Kpi } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ArrowUp, ArrowDown } from "lucide-react";
+import Link from 'next/link';
 
 export function KpiCard({ kpi }: { kpi: Kpi }) {
   const isIncrease = kpi.changeType === 'increase';
-  return (
-    <Card>
+
+  const cardContent = (
+    <Card className="hover:border-primary transition-colors">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
         <svg
@@ -40,4 +42,17 @@ export function KpiCard({ kpi }: { kpi: Kpi }) {
       </CardContent>
     </Card>
   );
+
+  if (kpi.filterValue) {
+    const href = kpi.filterValue === 'all' 
+      ? '/tracking' 
+      : `/tracking?status=${kpi.filterValue}`;
+    return (
+      <Link href={href}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }

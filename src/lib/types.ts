@@ -4,6 +4,7 @@ export type Kpi = {
   change: string;
   changeType: 'increase' | 'decrease';
   description: string;
+  filterValue?: string;
 };
 
 export type JobCard = {

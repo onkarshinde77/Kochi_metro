@@ -7,6 +7,7 @@ export const kpis: Kpi[] = [
     change: '',
     changeType: 'increase',
     description: 'Total operational fleet size',
+    filterValue: 'all',
   },
   {
     title: 'Ready for Service',
@@ -14,6 +15,7 @@ export const kpis: Kpi[] = [
     change: '+1',
     changeType: 'increase',
     description: 'Available for immediate deployment',
+    filterValue: 'Operational',
   },
   {
     title: 'On Standby',
@@ -21,6 +23,7 @@ export const kpis: Kpi[] = [
     change: '-1',
     changeType: 'decrease',
     description: 'Ready but not scheduled',
+    filterValue: 'Idle',
   },
   {
     title: 'In Maintenance',
@@ -28,6 +31,7 @@ export const kpis: Kpi[] = [
     change: '',
     changeType: 'increase',
     description: 'Currently undergoing maintenance',
+    filterValue: 'Maintenance',
   },
    {
     title: 'Pending Clearance',
