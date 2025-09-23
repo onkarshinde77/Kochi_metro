@@ -1,15 +1,4 @@
-import dynamic from 'next/dynamic';
-import { Skeleton } from '@/components/ui/skeleton';
-
-const TrainRanking = dynamic(() => import('@/components/ranking/train-ranking').then(mod => mod.TrainRanking), {
-  ssr: false,
-  loading: () => (
-    <div className="space-y-6">
-      <Skeleton className="h-64 w-full" />
-      <Skeleton className="h-64 w-full" />
-    </div>
-  )
-});
+import TrainRankingClient from '@/components/ranking/train-ranking-client';
 
 export default function RankingPage() {
   return (
@@ -20,7 +9,7 @@ export default function RankingPage() {
       <p className="text-muted-foreground">
         Use the AI-powered optimizer to rank available trains for induction based on multiple factors.
       </p>
-      <TrainRanking />
+      <TrainRankingClient />
     </div>
   );
 }
