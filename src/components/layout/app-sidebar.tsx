@@ -83,7 +83,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 href={item.href}
-                isActive={pathname === item.href}
+                isActive={pathname.startsWith(item.href) && (item.href !== '/job-cards' || pathname === '/job-cards')}
                 tooltip={{
                   children: item.label,
                 }}
@@ -114,10 +114,12 @@ export function AppSidebar() {
           <DropdownMenuContent className="w-56 mb-2 ml-2 border-sidebar-border bg-sidebar text-sidebar-foreground">
              <DropdownMenuLabel>Fleet Management</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-sidebar-border"/>
-            <DropdownMenuItem className="cursor-pointer hover:!bg-sidebar-accent">
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
+            <Link href="/profile">
+              <DropdownMenuItem className="cursor-pointer hover:!bg-sidebar-accent">
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem className="cursor-pointer hover:!bg-sidebar-accent">
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
