@@ -2,32 +2,46 @@ import type { Kpi, JobCard, Train, DepotLayout } from './types';
 
 export const kpis: Kpi[] = [
   {
-    title: 'Fleet Utilization',
-    value: '82%',
-    change: '+2.5%',
+    title: 'Total Trainsets',
+    value: '25',
+    change: '',
     changeType: 'increase',
-    description: 'Compared to last month',
+    description: 'Total operational fleet size',
   },
   {
-    title: 'On-Time Performance',
-    value: '96.3%',
-    change: '-0.2%',
-    changeType: 'decrease',
-    description: 'Compared to last week',
-  },
-  {
-    title: 'Maintenance Backlog',
-    value: '14 trains',
-    change: '-2',
-    changeType: 'decrease',
-    description: 'Awaiting scheduled maintenance',
-  },
-  {
-    title: 'Avg. Turnaround Time',
-    value: '4.5 hours',
-    change: '+15 min',
+    title: 'Ready for Service',
+    value: '18',
+    change: '+1',
     changeType: 'increase',
-    description: 'From arrival to departure',
+    description: 'Available for immediate deployment',
+  },
+  {
+    title: 'On Standby',
+    value: '4',
+    change: '-1',
+    changeType: 'decrease',
+    description: 'Ready but not scheduled',
+  },
+  {
+    title: 'In Maintenance',
+    value: '3',
+    change: '',
+    changeType: 'increase',
+    description: 'Currently undergoing maintenance',
+  },
+   {
+    title: 'Pending Clearance',
+    value: '8%',
+    change: '+2%',
+    changeType: 'increase',
+    description: 'Awaiting certificate clearance',
+  },
+  {
+    title: 'Predicted Failures',
+    value: '2',
+    change: '+1',
+    changeType: 'increase',
+    description: 'In next 24 hours',
   },
 ];
 
