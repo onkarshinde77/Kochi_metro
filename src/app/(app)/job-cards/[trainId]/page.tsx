@@ -3,6 +3,9 @@ import { currentJobCards, pastJobCards, initialTrains } from "@/lib/data";
 import { JobCardsTable } from "@/components/job-cards/job-cards-table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { notFound } from 'next/navigation';
+import type { JobCard } from "@/lib/types";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertTriangle } from "lucide-react";
 
 export default function TrainDetailPage({ params }: { params: { trainId: string } }) {
   const trainId = params.trainId;
@@ -16,6 +19,10 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
   const jobsForTrain = allJobs.filter(job => job.trainId === trainId);
   const openJobs = jobsForTrain.filter(job => job.status !== 'Completed');
   const completedJobs = jobsForTrain.filter(job => job.status === 'Completed');
+  
+  const criticalAlerts = openJobs.filter(
+    (job) => job.priority === "High" && job.status === "Pending"
+  );
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -25,8 +32,21 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
         </h1>
       </div>
        <p className="text-muted-foreground">
-        Detailed maintenance history for train {train.id}.
+        Detailed maintenance history for train {train.id}. Current Mileage: {train.mileage.toLocaleString()} km.
       </p>
+
+      {criticalAlerts.length > 0 && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Critical Pending Jobs</AlertTitle>
+          <AlertDescription>
+            This train has {criticalAlerts.length} high-priority job(s) pending.
+            <ul>
+                {criticalAlerts.map(job => <li key={job.id}>- {job.task}</li>)}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div className="grid gap-6">
         <Card>
@@ -35,7 +55,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
             <CardDescription>Maintenance tasks that are currently pending, in progress, or blocked.</CardDescription>
           </CardHeader>
           <CardContent>
-            <JobCardsTable jobs={openJobs} />
+            <JobCardsTable jobs={openJobs} trainMileage={train.mileage} />
           </CardContent>
         </Card>
 
@@ -45,7 +65,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
             <CardDescription>A historical record of all completed maintenance tasks for this train.</CardDescription>
           </CardHeader>
           <CardContent>
-            <JobCardsTable jobs={completedJobs} />
+            <JobCardsTable jobs={completedJobs} trainMileage={train.mileage} />
           </CardContent>
         </Card>
       </div>

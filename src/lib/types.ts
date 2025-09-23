@@ -13,12 +13,17 @@ export type JobCard = {
   status: 'Pending' | 'In Progress' | 'Completed' | 'Blocked';
   assignedTo: string;
   createdDate: string;
+  priority: 'High' | 'Medium' | 'Low';
+  expectedCompletion: string;
+  supervisor: string;
+  attachments: string[];
 };
 
 export type Train = {
   id: string;
   status: 'Operational' | 'Maintenance' | 'Idle' | 'Washing';
   currentTrack: string;
+  mileage: number;
 };
 
 export type Track = {
