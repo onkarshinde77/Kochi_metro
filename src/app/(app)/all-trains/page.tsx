@@ -14,18 +14,18 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Train[] }) {
-  const [allTrains, setAllTrains] = React.useState<Train[]>([...initialTrains, ...extraTrains]);
+  const [allTrains, setAllTrains] = React.useState<Train[]>([]);
   const [statusFilter, setStatusFilter] = React.useState<string>('all');
   const [searchTerm, setSearchTerm] = React.useState<string>('');
+  const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
-    setAllTrains(prevTrains => {
-      const existingIds = new Set(prevTrains.map(t => t.id));
-      const newTrains = extraTrains.filter(t => !existingIds.has(t.id));
-      return [...prevTrains, ...newTrains];
-    });
+    setIsClient(true);
+    setAllTrains([...initialTrains, ...extraTrains]);
   }, [extraTrains]);
   
   const filteredTrains = allTrains.filter(train => {
@@ -68,15 +68,27 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
         </div>
       </div>
      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredTrains.map(train => (
-          <TrainCard key={train.id} train={train} />
-        ))}
-      </div>
-      {filteredTrains.length === 0 && (
-        <div className="text-center text-muted-foreground py-16">
-            <p className="font-semibold">No trains match the current filters.</p>
+      {!isClient ? (
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className="space-y-3">
+                <Skeleton className="h-[250px] w-full rounded-xl" />
+              </div>
+            ))}
         </div>
+      ) : (
+        <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredTrains.map(train => (
+                <TrainCard key={train.id} train={train} />
+            ))}
+            </div>
+            {filteredTrains.length === 0 && (
+            <div className="text-center text-muted-foreground py-16">
+                <p className="font-semibold">No trains match the current filters.</p>
+            </div>
+            )}
+        </>
       )}
     </div>
   );
