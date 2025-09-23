@@ -3,7 +3,7 @@ import { initialTrains } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { notFound } from 'next/navigation';
 import { Badge } from "@/components/ui/badge";
-import { FileText, ShieldCheck, SprayCan, Thermometer, Calendar, Hand, Wrench } from "lucide-react";
+import { FileText, SprayCan, Hand, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { JobCardsTable } from "@/components/job-cards/job-cards-table";
 import { currentJobCards, pastJobCards } from "@/lib/data";
