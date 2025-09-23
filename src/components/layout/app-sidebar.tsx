@@ -17,6 +17,7 @@ import {
   User,
   Settings,
   LogOut,
+  Radar,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -57,6 +58,11 @@ const menuItems = [
     icon: Sliders,
     label: "Simulations",
   },
+  {
+    href: "/tracking",
+    icon: Radar,
+    label: "Tracking",
+  }
 ];
 
 export function AppSidebar() {
@@ -83,7 +89,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 href={item.href}
-                isActive={pathname.startsWith(item.href) && (item.href !== '/job-cards' || pathname === '/job-cards')}
+                isActive={pathname.startsWith(item.href)}
                 tooltip={{
                   children: item.label,
                 }}
