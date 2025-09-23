@@ -10,19 +10,26 @@ import {
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
-  Users,
   Map,
   ClipboardList,
-  FlaskConical,
-  BarChart,
-  Train,
   Sliders,
   SortAsc,
+  User,
+  Settings,
+  LogOut,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Logo } from "@/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const menuItems = [
   {
@@ -91,16 +98,37 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-sidebar-border">
-         <div className="flex items-center gap-3">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src="https://picsum.photos/seed/1/100/100" alt="@shadcn" data-ai-hint="man avatar" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col group-data-[collapsible=icon]:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex items-center gap-3 cursor-pointer">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src="https://picsum.photos/seed/1/100/100" alt="@shadcn" data-ai-hint="man avatar" />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col group-data-[collapsible=icon]:hidden">
                 <span className="text-sm font-medium text-sidebar-foreground">John Doe</span>
                 <span className="text-xs text-muted-foreground">Fleet Manager</span>
+              </div>
             </div>
-         </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 mb-2 ml-2 border-sidebar-border bg-sidebar text-sidebar-foreground">
+             <DropdownMenuLabel>Fleet Management</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-sidebar-border"/>
+            <DropdownMenuItem className="cursor-pointer hover:!bg-sidebar-accent">
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer hover:!bg-sidebar-accent">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-sidebar-border"/>
+            <DropdownMenuItem className="cursor-pointer hover:!bg-sidebar-accent">
+               <LogOut className="mr-2 h-4 w-4" />
+              <span>Logout</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </>
   );
