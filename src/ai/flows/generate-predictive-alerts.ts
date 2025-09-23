@@ -50,8 +50,8 @@ const prompt = ai.definePrompt({
   Train Component Conditions:
   {{trainComponentConditions}}
 
-  For each alert, include the affected component, a risk score (0-100), and recommended actions.  The alerts should be actionable and specific.
-  Return your answer as a JSON array.
+  For each alert, include the affected component, a risk score (0-100), and recommended actions.
+  IMPORTANT: Your response MUST be a valid JSON array of objects and nothing else. Do not include any explanatory text or markdown formatting.
   `,
 });
 
