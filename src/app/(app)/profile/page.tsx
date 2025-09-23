@@ -1,6 +1,7 @@
 // src/app/(app)/profile/page.tsx
 "use client";
 
+import * as React from "react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
