@@ -18,7 +18,7 @@ const isCertificateExpiringSoon = (expiryDate: string) => {
 const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
     <div className="flex justify-between items-start py-2 border-b text-sm">
         <span className="text-muted-foreground shrink-0 pr-4">{label}</span>
-        <span className="font-medium text-right break-words">{value}</span>
+        <span className="font-medium text-right break-all">{value}</span>
     </div>
 );
 
