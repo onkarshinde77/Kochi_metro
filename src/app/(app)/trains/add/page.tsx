@@ -54,15 +54,39 @@ const certificateSchema = z.object({
 
 const trainSchema = z.object({
   id: z.string().min(1, "Train ID is required."),
+  trainNumber: z.string().optional(),
   model: z.string().min(1, "Train Model is required."),
   manufacturingYear: z.coerce.number().int().min(1950, "Invalid year."),
   vendor: z.string().min(1, "Vendor is required."),
+  serialNumber: z.string().optional(),
+  
   coachCount: z.coerce.number().int().min(1, "Must have at least 1 coach."),
   capacity: z.object({
     seating: z.coerce.number().int().min(0),
     standing: z.coerce.number().int().min(0),
   }),
+  doorsPerCoach: z.coerce.number().int().positive().optional(),
+
   maxSpeed: z.coerce.number().int().positive("Max speed must be positive."),
+  accelerationRate: z.coerce.number().positive().optional(),
+  brakingDistance: z.coerce.number().positive().optional(),
+  engineType: z.string().optional(),
+  energySource: z.string().optional(),
+
+  powerOutput: z.string().optional(),
+  batteryBackup: z.object({
+      available: z.boolean().default(false),
+      capacity: z.string().optional(),
+  }).optional(),
+  regenerativeBraking: z.boolean().default(false),
+  avgEnergyConsumption: z.coerce.number().optional(),
+
+  trainLength: z.coerce.number().positive().optional(),
+  coachLength: z.coerce.number().positive().optional(),
+  trainWidth: z.coerce.number().positive().optional(),
+  trainHeight: z.coerce.number().positive().optional(),
+  floorHeight: z.coerce.number().positive().optional(),
+
   depot: z.string().min(1, "Depot assignment is required."),
   inductionDate: z.string().min(1, "Induction date is required."),
   
@@ -79,6 +103,7 @@ const trainSchema = z.object({
   cleaningStatus: z.enum(["Cleaned", "Pending"]),
   brandingStatus: z.enum(["Yes", "No"]),
   assignedRoute: z.string().optional(),
+  safetySystems: z.string().optional(),
   branding: z.object({
       contractId: z.string().optional(),
       startDate: z.string().optional(),
@@ -144,6 +169,21 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
       mileageThreshold: 150000,
       cleaningStatus: "Cleaned",
       brandingStatus: "No",
+      accelerationRate: 1.1,
+      brakingDistance: 200,
+      engineType: '3-phase AC Traction',
+      energySource: '750V DC Third Rail',
+      powerOutput: '1.2 MW',
+      batteryBackup: { available: true, capacity: '5 kWh' },
+      regenerativeBraking: true,
+      avgEnergyConsumption: 3.5,
+      doorsPerCoach: 4,
+      trainLength: 66.5,
+      coachLength: 22.1,
+      trainWidth: 2.9,
+      trainHeight: 3.9,
+      floorHeight: 1.1,
+      safetySystems: 'CCTV, Fire Detection',
     },
   });
 
@@ -195,23 +235,23 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
       status: "Idle",
       currentTrack: data.depot,
       isElectric: true,
-      trainNumber: `KMRL-${data.id.split('-')[1] || 'XXX'}`,
-      serialNumber: `${data.vendor.toUpperCase()}-KOC-${data.manufacturingYear}-${data.id.split('-')[1] || 'XXX'}`,
-      accelerationRate: 1.1,
-      brakingDistance: 200,
-      engineType: '3-phase AC Traction',
-      energySource: '750V DC Third Rail',
-      powerOutput: '1.2 MW',
-      batteryBackup: { available: true, capacity: '5 kWh' },
-      regenerativeBraking: true,
-      avgEnergyConsumption: 3.5,
-      doorsPerCoach: 4,
-      trainLength: 66.5,
-      coachLength: 22.1,
-      trainWidth: 2.9,
-      trainHeight: 3.9,
-      floorHeight: 1.1,
-      safetySystems: ['CCTV', 'Fire Detection'],
+      trainNumber: data.trainNumber || `KMRL-${data.id.split('-')[1] || 'XXX'}`,
+      serialNumber: data.serialNumber || `${data.vendor.toUpperCase()}-KOC-${data.manufacturingYear}-${data.id.split('-')[1] || 'XXX'}`,
+      accelerationRate: data.accelerationRate,
+      brakingDistance: data.brakingDistance,
+      engineType: data.engineType,
+      energySource: data.energySource,
+      powerOutput: data.powerOutput,
+      batteryBackup: data.batteryBackup || { available: false },
+      regenerativeBraking: data.regenerativeBraking,
+      avgEnergyConsumption: data.avgEnergyConsumption,
+      doorsPerCoach: data.doorsPerCoach,
+      trainLength: data.trainLength,
+      coachLength: data.coachLength,
+      trainWidth: data.trainWidth,
+      trainHeight: data.trainHeight,
+      floorHeight: data.floorHeight,
+      safetySystems: data.safetySystems?.split(',').map(s => s.trim()) || [],
     };
     
     // This is where you would typically send data to your backend/database.
@@ -239,44 +279,54 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid gap-8">
+            
             <Card>
               <CardHeader>
-                <CardTitle>Identification</CardTitle>
-                <CardDescription>Basic identification details for the metro.</CardDescription>
+                <CardTitle>Technical Specifications</CardTitle>
+                <CardDescription>Enter the detailed technical specifications for the new metro.</CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <FormField control={form.control} name="id" render={({ field }) => (
-                  <FormItem><FormLabel>Train ID / Number</FormLabel><FormControl><Input placeholder="e.g., T-026" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="model" render={({ field }) => (
-                  <FormItem><FormLabel>Train Model / Type</FormLabel><FormControl><Input placeholder="e.g., Alstom Metropolis" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="manufacturingYear" render={({ field }) => (
-                  <FormItem><FormLabel>Manufacturing Year</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="vendor" render={({ field }) => (
-                  <FormItem><FormLabel>Vendor / Supplier</FormLabel><FormControl><Input placeholder="e.g., Alstom" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Capacity & Performance</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <FormField control={form.control} name="coachCount" render={({ field }) => (
-                  <FormItem><FormLabel>Number of Coaches</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="capacity.seating" render={({ field }) => (
-                  <FormItem><FormLabel>Seating Capacity</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="capacity.standing" render={({ field }) => (
-                  <FormItem><FormLabel>Standing Capacity</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="maxSpeed" render={({ field }) => (
-                  <FormItem><FormLabel>Maximum Speed (km/h)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
+              <CardContent className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <FormField control={form.control} name="id" render={({ field }) => ( <FormItem><FormLabel>Train ID / Number</FormLabel><FormControl><Input placeholder="e.g., T-026" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="trainNumber" render={({ field }) => ( <FormItem><FormLabel>Official Train Number</FormLabel><FormControl><Input placeholder="e.g., KMRL-026" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="model" render={({ field }) => ( <FormItem><FormLabel>Train Model / Type</FormLabel><FormControl><Input placeholder="e.g., Alstom Metropolis" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="manufacturingYear" render={({ field }) => ( <FormItem><FormLabel>Manufacturing Year</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="vendor" render={({ field }) => ( <FormItem><FormLabel>Vendor / Supplier</FormLabel><FormControl><Input placeholder="e.g., Alstom" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                   <FormField control={form.control} name="serialNumber" render={({ field }) => ( <FormItem><FormLabel>Serial Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                </div>
+                <Separator />
+                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <FormField control={form.control} name="maxSpeed" render={({ field }) => ( <FormItem><FormLabel>Maximum Speed (km/h)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="accelerationRate" render={({ field }) => ( <FormItem><FormLabel>Acceleration Rate (m/s²)</FormLabel><FormControl><Input type="number" step="0.1" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="brakingDistance" render={({ field }) => ( <FormItem><FormLabel>Braking Distance (m)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="engineType" render={({ field }) => ( <FormItem><FormLabel>Traction Type</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="energySource" render={({ field }) => ( <FormItem><FormLabel>Energy Source</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                </div>
+                <Separator />
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <FormField control={form.control} name="powerOutput" render={({ field }) => ( <FormItem><FormLabel>Power Output</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="avgEnergyConsumption" render={({ field }) => ( <FormItem><FormLabel>Avg. Consumption (kWh/km)</FormLabel><FormControl><Input type="number" step="0.1" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="batteryBackup.capacity" render={({ field }) => ( <FormItem><FormLabel>Battery Capacity (kWh)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                </div>
+                 <Separator />
+                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <FormField control={form.control} name="coachCount" render={({ field }) => ( <FormItem><FormLabel>Number of Coaches</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="capacity.seating" render={({ field }) => ( <FormItem><FormLabel>Seating Capacity</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="capacity.standing" render={({ field }) => ( <FormItem><FormLabel>Standing Capacity</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                  <FormField control={form.control} name="doorsPerCoach" render={({ field }) => ( <FormItem><FormLabel>Doors per Coach</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                </div>
+                 <Separator />
+                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+                   <FormField control={form.control} name="trainLength" render={({ field }) => ( <FormItem><FormLabel>Train Length (m)</FormLabel><FormControl><Input type="number" step="0.1" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                   <FormField control={form.control} name="coachLength" render={({ field }) => ( <FormItem><FormLabel>Coach Length (m)</FormLabel><FormControl><Input type="number" step="0.1" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                   <FormField control={form.control} name="trainWidth" render={({ field }) => ( <FormItem><FormLabel>Train Width (m)</FormLabel><FormControl><Input type="number" step="0.1" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                   <FormField control={form.control} name="trainHeight" render={({ field }) => ( <FormItem><FormLabel>Train Height (m)</FormLabel><FormControl><Input type="number" step="0.1" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                   <FormField control={form.control} name="floorHeight" render={({ field }) => ( <FormItem><FormLabel>Floor Height (m)</FormLabel><FormControl><Input type="number" step="0.1" {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                </div>
+                <Separator />
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <FormField control={form.control} name="safetySystems" render={({ field }) => ( <FormItem><FormLabel>Safety Systems</FormLabel><FormControl><Input placeholder="CCTV, Fire Detection..." {...field} /></FormControl><FormMessage /></FormItem> )}/>
+                </div>
               </CardContent>
             </Card>
 
