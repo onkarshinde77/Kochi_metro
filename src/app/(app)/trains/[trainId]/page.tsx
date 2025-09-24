@@ -3,7 +3,7 @@ import { initialTrains } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { notFound } from 'next/navigation';
 import { Badge } from "@/components/ui/badge";
-import { FileText, SprayCan, Hand, Wrench, FileArchive, GanttChartSquare, Target, AlertTriangle, User, Phone, Mail, CheckCircle2, Calendar, Clock, Users, Info, Building, Shield, FileSignature, CheckSquare, Search, History, MessageSquare, UserCheck } from "lucide-react";
+import { FileText, SprayCan, Hand, Wrench, FileArchive, GanttChartSquare, Target, AlertTriangle, User, Phone, Mail, CheckCircle2, Calendar, Clock, Users, Info, Building, Shield, FileSignature, CheckSquare, Search, History, MessageSquare, UserCheck, Settings, Power, Zap, Battery, Recycle, DoorOpen, StretchHorizontal, Square, ArrowRight, ArrowUp, Ruler } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CertificateDetails } from "@/lib/types";
 
@@ -18,7 +18,7 @@ const isCertificateExpiringSoon = (expiryDate: string) => {
 const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
     <div className="flex justify-between py-2 border-b text-sm">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium text-right">{value}</span>
+        <span className="font-medium text-right text-wrap">{value}</span>
     </div>
 );
 
@@ -186,14 +186,81 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
           </CardContent>
         </Card>
       </div>
+      
+       <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Wrench className="h-5 w-5 text-primary" />Technical Specifications</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+             <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Info className="h-4 w-4" />Identity</CardTitle></CardHeader>
+                <CardContent>
+                    <DetailRow label="Train Number" value={train.trainNumber} />
+                    <DetailRow label="Model Name" value={train.model} />
+                    <DetailRow label="Manufacturer" value={train.vendor} />
+                    <DetailRow label="Year of Manufacture" value={train.manufacturingYear} />
+                    <DetailRow label="Serial Number" value={train.serialNumber} />
+                </CardContent>
+             </Card>
+             <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Settings className="h-4 w-4" />Performance</CardTitle></CardHeader>
+                <CardContent>
+                    <DetailRow label="Max Speed" value={`${train.maxSpeed} km/h`} />
+                    <DetailRow label="Acceleration Rate" value={`${train.accelerationRate} m/s²`} />
+                    <DetailRow label="Braking Distance" value={`${train.brakingDistance} m`} />
+                    <DetailRow label="Traction Type" value={train.engineType} />
+                    <DetailRow label="Energy Source" value={train.energySource} />
+                </CardContent>
+             </Card>
+              <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Power className="h-4 w-4" />Power & Energy</CardTitle></CardHeader>
+                <CardContent>
+                    <DetailRow label="Power Output" value={train.powerOutput} />
+                    <DetailRow label="Battery Backup" value={train.batteryBackup.available ? `${train.batteryBackup.capacity}` : 'No'} />
+                    <DetailRow label="Regen. Braking" value={train.regenerativeBraking ? <Zap className="h-5 w-5 text-green-600" /> : 'No'} />
+                    <DetailRow label="Avg. Consumption" value={`${train.avgEnergyConsumption} kWh/km`} />
+                </CardContent>
+             </Card>
+             <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Users className="h-4 w-4" />Capacity & Layout</CardTitle></CardHeader>
+                <CardContent>
+                    <DetailRow label="Coach Count" value={train.coachCount} />
+                    <DetailRow label="Seating Capacity" value={train.capacity.seating} />
+                    <DetailRow label="Standing Capacity" value={train.capacity.standing} />
+                    <DetailRow label="Total Capacity" value={train.capacity.seating + train.capacity.standing} />
+                    <DetailRow label="Doors per Coach" value={train.doorsPerCoach} />
+                </CardContent>
+             </Card>
+             <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Ruler className="h-4 w-4" />Dimensions</CardTitle></CardHeader>
+                <CardContent>
+                    <DetailRow label="Train Length" value={`${train.trainLength} m`} />
+                    <DetailRow label="Coach Length" value={`${train.coachLength} m`} />
+                    <DetailRow label="Train Width" value={`${train.trainWidth} m`} />
+                    <DetailRow label="Train Height" value={`${train.trainHeight} m`} />
+                    <DetailRow label="Floor Height" value={`${train.floorHeight} m`} />
+                </CardContent>
+             </Card>
+             <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Shield className="h-4 w-4" />Maintenance & Safety</CardTitle></CardHeader>
+                <CardContent>
+                    <DetailRow label="Odometer" value={`${train.mileage.toLocaleString()} km`} />
+                    <DetailRow label="Maint. Interval (km)" value={`${train.maintenanceInterval.distance.toLocaleString()} km`} />
+                    <DetailRow label="Last Maintenance" value={formatDate(train.lastMaintenanceDate)} />
+                    <DetailRow label="Next Maintenance" value={formatDate(train.nextMaintenanceDate)} />
+                    <DetailRow label="Safety Systems" value={train.safetySystems.join(', ')} />
+                </CardContent>
+             </Card>
+          </CardContent>
+        </Card>
 
-       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
         {/* Cleaning Information */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Hand className="h-5 w-5 text-primary" />Cleaning Information</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-6 md:grid-cols-2">
+            <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Info className="h-4 w-4" />Task Details</CardTitle></CardHeader>
                     <CardContent>
@@ -221,20 +288,6 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
                     </CardContent>
                 </Card>
             </CardContent>
-        </Card>
-
-
-        {/* Technical Specifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Wrench className="h-5 w-5 text-primary" />Technical Specifications</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-             <DetailRow label="Engine Type" value={train.engineType} />
-             <DetailRow label="Max Speed" value={`${train.maxSpeed} km/h`} />
-             <DetailRow label="Coach Count" value={train.coachCount} />
-             <DetailRow label="Mileage" value={`${train.mileage.toLocaleString()} km`} />
-          </CardContent>
         </Card>
       </div>
     </div>

@@ -108,17 +108,42 @@ export type CertificateDetails = {
 export type Train = {
   // Identification
   id: string; // Train ID / Number
+  trainNumber: string;
   model: string; // Train Model / Type
   manufacturingYear: number;
   vendor: string;
+  serialNumber: string;
   
-  // Capacity & Performance
+  // Performance Specs
+  maxSpeed: number; // in km/h
+  accelerationRate: number; // m/s²
+  brakingDistance: number; // in meters
+  engineType: string; // AC Traction, etc.
+  energySource: string;
+
+  // Power & Energy
+  powerOutput: string; // in kW or MW
+  batteryBackup: {
+    available: boolean;
+    capacity?: string; // in kWh
+  };
+  regenerativeBraking: boolean;
+  avgEnergyConsumption: number; // kWh per km
+
+  // Capacity & Layout
   coachCount: number;
   capacity: {
     seating: number;
     standing: number;
   };
-  maxSpeed: number; // in km/h
+  doorsPerCoach: number;
+  
+  // Dimensions
+  trainLength: number; // in meters
+  coachLength: number; // in meters
+  trainWidth: number; // in meters
+  trainHeight: number; // in meters
+  floorHeight: number; // in meters
 
   // Operational Details
   depot: string; // Depot / Yard Assigned
@@ -138,14 +163,14 @@ export type Train = {
     distance: number; // in km
     time: number; // in months
   };
-  mileage: number; // Current Mileage
+  mileage: number; // Current Mileage / Odometer Reading
   mileageThreshold: number; // Mileage Threshold for Inspection
+  safetySystems: string[];
 
   // Other
   cleaning: CleaningDetails;
   branding: BrandingDetails;
   isElectric: true;
-  engineType: string;
 };
 
 export type Track = {
