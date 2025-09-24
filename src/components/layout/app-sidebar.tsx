@@ -108,8 +108,6 @@ export function AppSidebar() {
                   asChild
                   href="/trains/add"
                   isActive={pathname.startsWith('/trains/add')}
-                  variant="default"
-                  className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                   tooltip={{
                     children: "Add New Metro",
                   }}
