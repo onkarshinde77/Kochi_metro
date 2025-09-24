@@ -2,6 +2,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { initialTrains } from '@/lib/data';
 import type { Train } from '@/lib/types';
 import { TrainCard } from '@/components/all-trains/train-card';
@@ -15,6 +16,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
 
 
 export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Train[] }) {
@@ -54,6 +57,12 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
             </p>
         </div>
         <div className="flex items-center gap-4 w-full md:w-auto">
+            <Button asChild>
+                <Link href="/trains/add">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add New Metro
+                </Link>
+            </Button>
             <Input
               placeholder="Filter by Train ID..."
               value={searchTerm}

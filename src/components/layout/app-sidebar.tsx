@@ -103,21 +103,6 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
-            <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  href="/trains/add"
-                  isActive={pathname.startsWith('/trains/add')}
-                  tooltip={{
-                    children: "Add New Metro",
-                  }}
-                >
-                  <Link href="/trains/add">
-                    <PlusCircle />
-                    <span>Add New Metro</span>
-                  </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-sidebar-border">
