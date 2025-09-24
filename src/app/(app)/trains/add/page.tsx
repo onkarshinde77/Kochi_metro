@@ -83,7 +83,7 @@ const trainSchema = z.object({
       penaltyTerms: z.string().optional(),
       penaltyPercentage: z.coerce.number().optional(),
       contactPerson: z.string().optional(),
-      contactEmail: z.string().email().optional(),
+      contactEmail: z.string().email({ message: "Invalid email address." }).optional().or(z.literal('')),
       contactPhone: z.string().optional(),
   }).optional(),
 });
@@ -373,7 +373,7 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
                     <FormField control={form.control} name="branding.hourlyRate" render={({ field }) => (<FormItem><FormLabel>Hourly Rate ($)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
                      <FormField control={form.control} name="branding.contractStatus" render={({ field }) => (
                         <FormItem><FormLabel>Contract Status</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select Status"/></SelectTrigger></FormControl>
                             <SelectContent><SelectItem value="Active">Active</SelectItem><SelectItem value="Expired">Expired</SelectItem><SelectItem value="Pending">Pending</SelectItem></SelectContent>
                         </Select><FormMessage /></FormItem>
                     )}/>
@@ -385,7 +385,7 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
                     <FormField control={form.control} name="branding.advertiserName" render={({ field }) => (<FormItem><FormLabel>Advertiser Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
                     <FormField control={form.control} name="branding.brandingType" render={({ field }) => (
                         <FormItem><FormLabel>Branding Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select Type"/></SelectTrigger></FormControl>
                             <SelectContent><SelectItem value="Full Wrap">Full Wrap</SelectItem><SelectItem value="Partial Wrap">Partial Wrap</SelectItem><SelectItem value="Interior">Interior</SelectItem></SelectContent>
                         </Select><FormMessage /></FormItem>
                     )}/>
