@@ -3,8 +3,9 @@ import { initialTrains } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { notFound } from 'next/navigation';
 import { Badge } from "@/components/ui/badge";
-import { FileText, SprayCan, Hand, Wrench, FileArchive, GanttChartSquare, Target, AlertTriangle, User, Phone, Mail, CheckCircle2, Calendar, Clock, Users, Info, Building } from "lucide-react";
+import { FileText, SprayCan, Hand, Wrench, FileArchive, GanttChartSquare, Target, AlertTriangle, User, Phone, Mail, CheckCircle2, Calendar, Clock, Users, Info, Building, Shield, FileSignature, CheckSquare, Search, History, MessageSquare, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { CertificateDetails } from "@/lib/types";
 
 const isCertificateExpiringSoon = (expiryDate: string) => {
     const today = new Date();
@@ -15,15 +16,20 @@ const isCertificateExpiringSoon = (expiryDate: string) => {
 }
 
 const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-    <div className="flex justify-between py-2 border-b">
+    <div className="flex justify-between py-2 border-b text-sm">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium text-right text-sm">{value}</span>
+        <span className="font-medium text-right">{value}</span>
     </div>
 );
 
 const formatDateTime = (dateString?: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString();
 }
 
 
@@ -35,7 +41,49 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
     notFound();
   }
 
-  const { branding, cleaning } = train;
+  const { branding, cleaning, fitnessCertificate, safetyCertificate } = train;
+
+  const CertificateCard = ({ title, certificate, icon }: { title: string, certificate: CertificateDetails, icon: React.ReactNode }) => (
+    <Card>
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">{icon}{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                <DetailRow label="Certificate ID" value={certificate.certificateId} />
+                <DetailRow label="Reference #" value={certificate.certificateNumber} />
+                <DetailRow label="Issue Date" value={formatDate(certificate.issueDate)} />
+                <DetailRow label="Expiry Date" value={
+                    <span className={cn(isCertificateExpiringSoon(certificate.expiryDate) && "text-destructive")}>
+                        {formatDate(certificate.expiryDate)}
+                    </span>
+                } />
+                <DetailRow label="Status" value={<Badge variant={certificate.status === 'ACTIVE' ? 'default' : 'destructive'} className={cn(certificate.status === 'ACTIVE' && 'bg-green-600')}>{certificate.status}</Badge>} />
+                <DetailRow label="Is Renewal" value={certificate.isRenewal ? 'Yes' : 'No'} />
+            </div>
+            
+            <Card className="bg-muted/50">
+                <CardHeader className="p-4"><CardTitle className="flex items-center gap-2 text-base"><Building className="h-4 w-4" />Authority & Dept.</CardTitle></CardHeader>
+                <CardContent className="p-4 pt-0">
+                    <DetailRow label="Department" value={certificate.department} />
+                    <DetailRow label="Issued By" value={certificate.issuedBy} />
+                    <DetailRow label="Approved By" value={certificate.approvedBy} />
+                </CardContent>
+            </Card>
+
+            <Card className="bg-muted/50">
+                <CardHeader className="p-4"><CardTitle className="flex items-center gap-2 text-base"><Search className="h-4 w-4" />Inspection</CardTitle></CardHeader>
+                <CardContent className="p-4 pt-0">
+                    <DetailRow label="Last Inspection" value={formatDate(certificate.lastInspectionDate)} />
+                    <DetailRow label="Next Inspection Due" value={formatDate(certificate.nextInspectionDue)} />
+                </CardContent>
+            </Card>
+
+            {certificate.complianceNotes && <p className="text-xs text-muted-foreground pt-2">{certificate.complianceNotes}</p>}
+
+        </CardContent>
+    </Card>
+  );
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
@@ -69,7 +117,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
              <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><FileArchive className="h-4 w-4" />Contract Details</CardTitle></CardHeader>
-                    <CardContent className="space-y-1 text-sm">
+                    <CardContent className="space-y-1">
                         <DetailRow label="Contract ID" value={branding.contractId} />
                         <DetailRow label="Advertiser" value={branding.advertiserName} />
                         <DetailRow label="Start Date" value={branding.startDate ? new Date(branding.startDate).toLocaleDateString() : 'N/A'} />
@@ -81,7 +129,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
                 </Card>
                  <Card>
                     <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><GanttChartSquare className="h-4 w-4" />Creative Information</CardTitle></CardHeader>
-                    <CardContent className="space-y-1 text-sm">
+                    <CardContent className="space-y-1">
                         <DetailRow label="Branding Type" value={branding.brandingType} />
                         <DetailRow label="Description" value={branding.brandingDescription} />
                         <DetailRow label="Creative Content" value={<a href={branding.creativeContent} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">View PDF</a>} />
@@ -90,7 +138,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
                 </Card>
                  <Card>
                     <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Target className="h-4 w-4" />Performance & SLA</CardTitle></CardHeader>
-                    <CardContent className="space-y-1 text-sm">
+                    <CardContent className="space-y-1">
                         <DetailRow label="Required Hours" value={`${branding.requiredHours} hrs`} />
                         <DetailRow label="Min. Daily Hours" value={`${branding.minimumDailyHours} hrs`} />
                         <DetailRow label="Min. Weekly Hours" value={`${branding.minimumWeeklyHours} hrs`} />
@@ -99,14 +147,14 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
                 </Card>
                  <Card>
                     <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><AlertTriangle className="h-4 w-4" />Penalty & Compliance</CardTitle></CardHeader>
-                    <CardContent className="space-y-1 text-sm">
+                    <CardContent className="space-y-1">
                         <DetailRow label="Penalty Terms" value={branding.penaltyTerms} />
                         <DetailRow label="Penalty Percentage" value={`${branding.penaltyPercentage}%`} />
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><User className="h-4 w-4" />Contact Information</CardTitle></CardHeader>
-                    <CardContent className="space-y-3 text-sm">
+                    <CardContent className="space-y-3">
                        <div className="flex items-center gap-3">
                           <User className="h-4 w-4 text-muted-foreground" />
                           <span>{branding.contactPerson}</span>
@@ -126,27 +174,20 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
       </Card>
 
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-1">
         {/* Fitness Certificates */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Certificates & Validity</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <DetailRow label="Fitness Certificate" value={
-                <span className={cn("font-medium", isCertificateExpiringSoon(train.fitnessCertificate.validUntil) && "text-destructive")}>
-                    Expires {new Date(train.fitnessCertificate.validUntil).toLocaleDateString()}
-                </span>
-            } />
-            <DetailRow label="Certificate Issuer" value={train.fitnessCertificate.issuer} />
-            <DetailRow label="Safety Certificate" value={
-                 <span className={cn("font-medium", isCertificateExpiringSoon(train.safetyCertificate.expiry) && "text-destructive")}>
-                    Expires {new Date(train.safetyCertificate.expiry).toLocaleDateString()}
-                </span>
-            } />
+          <CardContent className="grid gap-6 md:grid-cols-2">
+            <CertificateCard title="Fitness Certificate" certificate={fitnessCertificate} icon={<CheckSquare className="h-4 w-4" />} />
+            <CertificateCard title="Safety & Signaling Certificate" certificate={safetyCertificate} icon={<Shield className="h-4 w-4" />} />
           </CardContent>
         </Card>
+      </div>
 
+       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
         {/* Cleaning Information */}
         <Card className="lg:col-span-2">
             <CardHeader>

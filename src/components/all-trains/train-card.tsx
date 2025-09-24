@@ -61,8 +61,8 @@ export function TrainCard({ train }: { train: Train }) {
         </div>
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> Fitness Cert.</span>
-          <span className={cn("font-medium", isCertificateExpiringSoon(train.fitnessCertificate.validUntil) && "text-destructive")}>
-            Expires {new Date(train.fitnessCertificate.validUntil).toLocaleDateString()}
+          <span className={cn("font-medium", isCertificateExpiringSoon(train.fitnessCertificate.expiryDate) && "text-destructive")}>
+            Expires {new Date(train.fitnessCertificate.expiryDate).toLocaleDateString()}
           </span>
         </div>
       </CardContent>

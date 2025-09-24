@@ -1,4 +1,4 @@
-import type { Kpi, JobCard, Train, DepotLayout, BrandingDetails, CleaningDetails } from './types';
+import type { Kpi, JobCard, Train, DepotLayout, BrandingDetails, CleaningDetails, CertificateDetails } from './types';
 
 export const kpis: Kpi[] = [
   {
@@ -94,7 +94,7 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
       requiredHours: 1200,
       minimumDailyHours: 4,
       minimumWeeklyHours: 28,
-      slaRequirements: 'Maintain 95% visibility, no peeling or fading.',
+      slaRequirements: 'Maintain 95% visibility, no peeling or peeling or fading.',
       penaltyTerms: '5% reduction in monthly fee for SLA breaches.',
       penaltyPercentage: 5,
       contactPerson: 'Alex Doe',
@@ -126,6 +126,40 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
       supervisorOverride: i % 10 === 0,
   }
 
+  const fitnessCertificate: CertificateDetails = {
+    certificateId: `FIT-${trainId}-${2024}`,
+    certificateNumber: `IR/FIT/${2024}/${i+1}`,
+    issueDate: '2024-01-01',
+    expiryDate: '2024-12-31',
+    status: 'ACTIVE',
+    isRenewal: i > 5,
+    previousCertificateId: i > 5 ? `FIT-${trainId}-${2023}` : undefined,
+    department: 'ROLLING_STOCK',
+    issuedBy: 'R. Mehra',
+    approvedBy: 'S. K. Jain',
+    lastInspectionDate: '2023-12-15',
+    nextInspectionDue: '2024-11-15',
+    inspectionDetails: 'Annual full-body inspection passed without remarks.',
+    complianceNotes: 'Complies with all RDSO standards.',
+    lastUpdated: new Date().toISOString(),
+  };
+
+  const safetyCertificate: CertificateDetails = {
+    certificateId: `SAFE-${trainId}-${2024}`,
+    certificateNumber: `CMRS/SAFE/${2024}/${i+1}`,
+    issueDate: '2024-06-01',
+    expiryDate: '2025-05-31',
+    status: 'ACTIVE',
+    isRenewal: i > 10,
+    department: 'SIGNALING',
+    issuedBy: 'P. Nair',
+    approvedBy: 'A. Verma',
+    lastInspectionDate: '2024-05-20',
+    nextInspectionDue: '2025-04-20',
+    complianceNotes: 'Compliant with CBTC-A2 signaling protocols.',
+    lastUpdated: new Date().toISOString(),
+  };
+
 
   return {
     id: trainId,
@@ -140,15 +174,8 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
     status: statusOptions[i % statusOptions.length],
     currentTrack: trackOptions[i % trackOptions.length],
     assignedRoute: i % 4 === 0 ? 'Aluva - Pettah' : undefined,
-    fitnessCertificate: {
-      validFrom: '2024-01-01',
-      validUntil: '2024-12-31',
-      issuer: 'Indian Railways',
-    },
-    safetyCertificate: {
-      expiry: '2025-06-30',
-      type: 'CBTC-A2',
-    },
+    fitnessCertificate: fitnessCertificate,
+    safetyCertificate: safetyCertificate,
     nextMaintenanceDate: new Date(2024, 8 + Math.floor(i / 10), 15).toISOString().split('T')[0],
     lastMaintenanceDate: new Date(2024, 2 + Math.floor(i / 10), 15).toISOString().split('T')[0],
     maintenanceInterval: { distance: 20000, time: 6 },

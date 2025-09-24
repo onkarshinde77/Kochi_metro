@@ -79,6 +79,31 @@ export type CleaningDetails = {
   supervisorOverride: boolean;
 };
 
+export type CertificateDetails = {
+  // Certificate Details
+  certificateId: string;
+  certificateNumber: string;
+  issueDate: string;
+  expiryDate: string;
+  status: 'ACTIVE' | 'EXPIRED' | 'PENDING';
+  isRenewal: boolean;
+  previousCertificateId?: string;
+  
+  // Department & Authority
+  department: 'ROLLING_STOCK' | 'SIGNALING' | 'OPERATIONS';
+  issuedBy: string;
+  approvedBy: string;
+  
+  // Inspection & Compliance
+  lastInspectionDate: string;
+  nextInspectionDue: string;
+  inspectionDetails?: string;
+  complianceNotes?: string;
+  
+  // Additional Info
+  remarks?: string;
+  lastUpdated: string;
+};
 
 export type Train = {
   // Identification
@@ -103,15 +128,8 @@ export type Train = {
   assignedRoute?: string; // Assigned Route / Corridor
   
   // Certifications
-  fitnessCertificate: {
-    validFrom: string;
-    validUntil: string;
-    issuer: string;
-  };
-  safetyCertificate: {
-    expiry: string;
-    type: string;
-  };
+  fitnessCertificate: CertificateDetails;
+  safetyCertificate: CertificateDetails;
 
   // Maintenance
   nextMaintenanceDate: string;
