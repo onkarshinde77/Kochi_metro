@@ -16,9 +16,9 @@ const isCertificateExpiringSoon = (expiryDate: string) => {
 }
 
 const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-    <div className="flex justify-between py-2 border-b text-sm">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium text-right text-wrap">{value}</span>
+    <div className="flex justify-between items-start py-2 border-b text-sm">
+        <span className="text-muted-foreground shrink-0 pr-4">{label}</span>
+        <span className="font-medium text-right break-words">{value}</span>
     </div>
 );
 
@@ -87,7 +87,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
             <h1 className="text-3xl font-bold tracking-tight">
             Metro Details: <span className="text-primary">{train.id}</span>
@@ -101,7 +101,7 @@ export default function TrainDetailPage({ params }: { params: { trainId: string 
             train.status === 'Maintenance' && 'bg-orange-100 text-orange-800 border-orange-200',
             train.status === 'Idle' && 'bg-blue-100 text-blue-800 border-blue-200',
             train.status === 'Washing' && 'bg-cyan-100 text-cyan-800 border-cyan-200',
-            'text-base px-4 py-2'
+            'text-base px-4 py-2 self-start sm:self-center'
         )}>{train.status}</Badge>
       </div>
         
