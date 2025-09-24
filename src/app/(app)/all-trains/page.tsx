@@ -51,7 +51,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-            <h1 className="text-3xl font-bold tracking-tight">All Trains</h1>
+            <h1 className="text-3xl font-bold tracking-tight">All Metros</h1>
             <p className="text-muted-foreground mt-1">
                 Real-time overview of the entire fleet's status and location.
             </p>
@@ -64,7 +64,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
                 </Link>
             </Button>
             <Input
-              placeholder="Filter by Train ID..."
+              placeholder="Filter by Metro ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-xs"
@@ -104,7 +104,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
             </div>
             {filteredTrains.length === 0 && (
             <div className="text-center text-muted-foreground py-16">
-                <p className="font-semibold">No trains match the current filters.</p>
+                <p className="font-semibold">No metros match the current filters.</p>
             </div>
             )}
         </>

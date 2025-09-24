@@ -63,7 +63,7 @@ const menuItems = [
   {
     href: "/all-trains",
     icon: Radar,
-    label: "All Trains",
+    label: "All Metros",
   },
 ];
 
