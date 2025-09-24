@@ -28,6 +28,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import type { Train } from "@/lib/types";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // This is a temporary prop to simulate adding a train
 // In a real app, this would come from a layout context or a global state manager
@@ -63,6 +64,28 @@ const trainSchema = z.object({
   cleaningStatus: z.enum(["Cleaned", "Pending"]),
   brandingStatus: z.enum(["Yes", "No"]),
   assignedRoute: z.string().optional(),
+  branding: z.object({
+      contractId: z.string().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
+      contractValue: z.coerce.number().optional(),
+      hourlyRate: z.coerce.number().optional(),
+      contractStatus: z.enum(["Active", "Expired", "Pending"]).optional(),
+      advertiserName: z.string().optional(),
+      brandingType: z.enum(["Full Wrap", "Partial Wrap", "Interior"]).optional(),
+      brandingDescription: z.string().optional(),
+      creativeContent: z.string().optional(),
+      placementInstructions: z.string().optional(),
+      requiredHours: z.coerce.number().optional(),
+      minimumDailyHours: z.coerce.number().optional(),
+      minimumWeeklyHours: z.coerce.number().optional(),
+      slaRequirements: z.string().optional(),
+      penaltyTerms: z.string().optional(),
+      penaltyPercentage: z.coerce.number().optional(),
+      contactPerson: z.string().optional(),
+      contactEmail: z.string().email().optional(),
+      contactPhone: z.string().optional(),
+  }).optional(),
 });
 
 type TrainFormValues = z.infer<typeof trainSchema>;
@@ -94,18 +117,93 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
     },
   });
 
+  const watchBrandingStatus = form.watch("brandingStatus");
+
   function onSubmit(data: TrainFormValues) {
-    const newTrain: Train = {
-      ...data,
-      status: "Idle", // Default status
-      currentTrack: data.depot, // Default location
-      isElectric: true, // Assuming all are electric
+    const newTrain: any = { // Using any to build up the object
+      id: data.id,
+      model: data.model,
+      manufacturingYear: data.manufacturingYear,
+      vendor: data.vendor,
+      coachCount: data.coachCount,
+      capacity: data.capacity,
+      maxSpeed: data.maxSpeed,
+      depot: data.depot,
+      inductionDate: data.inductionDate,
+      fitnessCertificate: {
+          certificateId: `FIT-${data.id}-${new Date().getFullYear()}`,
+          certificateNumber: `IR/FIT/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
+          issueDate: data.fitnessCertificate.validFrom,
+          expiryDate: data.fitnessCertificate.validUntil,
+          status: 'ACTIVE',
+          isRenewal: false,
+          department: 'ROLLING_STOCK',
+          issuedBy: 'System',
+          approvedBy: 'System',
+          lastInspectionDate: new Date().toISOString().split('T')[0],
+          nextInspectionDue: data.fitnessCertificate.validUntil,
+          lastUpdated: new Date().toISOString(),
+      },
+      safetyCertificate: {
+          certificateId: `SAFE-${data.id}-${new Date().getFullYear()}`,
+          certificateNumber: `CMRS/SAFE/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
+          issueDate: new Date().toISOString().split('T')[0],
+          expiryDate: data.safetyCertificateExpiry,
+          status: 'ACTIVE',
+          isRenewal: false,
+          department: 'SIGNALING',
+          issuedBy: 'System',
+          approvedBy: 'System',
+          lastInspectionDate: new Date().toISOString().split('T')[0],
+          nextInspectionDue: data.safetyCertificateExpiry,
+          lastUpdated: new Date().toISOString(),
+      },
+      nextMaintenanceDate: data.nextMaintenanceDate,
+      lastMaintenanceDate: new Date().toISOString().split('T')[0],
+      maintenanceInterval: data.maintenanceInterval,
+      mileage: data.mileage,
+      mileageThreshold: data.mileageThreshold,
+      cleaning: {
+          bayId: `Bay-0${(Math.floor(Math.random()*3)) + 1}`,
+          cleaningType: 'ROUTINE',
+          status: 'COMPLETED',
+          lastUpdated: new Date().toISOString(),
+          lastCleaned: new Date().toISOString().split('T')[0],
+          scheduledStart: new Date().toISOString(),
+          scheduledEnd: new Date().toISOString(),
+          assignedTeamId: 'Team-A',
+          supervisorOverride: false,
+      },
+      branding: {
+        status: data.brandingStatus,
+        ...(data.brandingStatus === "Yes" ? data.branding : {}),
+      },
+      status: "Idle",
+      currentTrack: data.depot,
+      isElectric: true,
+      trainNumber: `KMRL-${data.id.split('-')[1] || 'XXX'}`,
+      serialNumber: `${data.vendor.toUpperCase()}-KOC-${data.manufacturingYear}-${data.id.split('-')[1] || 'XXX'}`,
+      accelerationRate: 1.1,
+      brakingDistance: 200,
+      engineType: '3-phase AC Traction',
+      energySource: '750V DC Third Rail',
+      powerOutput: '1.2 MW',
+      batteryBackup: { available: true, capacity: '5 kWh' },
+      regenerativeBraking: true,
+      avgEnergyConsumption: 3.5,
+      doorsPerCoach: 4,
+      trainLength: 66.5,
+      coachLength: 22.1,
+      trainWidth: 2.9,
+      trainHeight: 3.9,
+      floorHeight: 1.1,
+      safetySystems: ['CCTV', 'Fire Detection'],
     };
     
     // This is where you would typically send data to your backend/database.
     // For now, we'll use the onAddTrain prop to update the state in the layout.
     if(onAddTrain) {
-      onAddTrain(newTrain);
+      onAddTrain(newTrain as Train);
     }
 
     toast({
@@ -216,7 +314,7 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
                  <FormField control={form.control} name="maintenanceInterval.time" render={({ field }) => (
                   <FormItem><FormLabel>Interval (months)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                 )}/>
-                 <FormField control={form.control} name="currentMileage" render={({ field }) => (
+                 <FormField control={form.control} name="mileage" render={({ field }) => (
                   <FormItem><FormLabel>Current Mileage</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                 )}/>
                  <FormField control={form.control} name="mileageThreshold" render={({ field }) => (
@@ -224,6 +322,104 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
                 )}/>
               </CardContent>
             </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Branding &amp; Advertising</CardTitle>
+                <CardDescription>Does this metro have a branding contract?</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="brandingStatus"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="No" />
+                            </FormControl>
+                            <FormLabel className="font-normal">No, this metro is not branded.</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="Yes" />
+                            </FormControl>
+                            <FormLabel className="font-normal">Yes, add branding details below.</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            {watchBrandingStatus === 'Yes' && (
+              <>
+                <Card>
+                  <CardHeader><CardTitle>Branding: Contract Info</CardTitle></CardHeader>
+                  <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <FormField control={form.control} name="branding.contractId" render={({ field }) => (<FormItem><FormLabel>Contract ID</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.startDate" render={({ field }) => (<FormItem><FormLabel>Start Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.endDate" render={({ field }) => (<FormItem><FormLabel>End Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.contractValue" render={({ field }) => (<FormItem><FormLabel>Contract Value ($)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.hourlyRate" render={({ field }) => (<FormItem><FormLabel>Hourly Rate ($)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                     <FormField control={form.control} name="branding.contractStatus" render={({ field }) => (
+                        <FormItem><FormLabel>Contract Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                            <SelectContent><SelectItem value="Active">Active</SelectItem><SelectItem value="Expired">Expired</SelectItem><SelectItem value="Pending">Pending</SelectItem></SelectContent>
+                        </Select><FormMessage /></FormItem>
+                    )}/>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader><CardTitle>Branding: Creative Info</CardTitle></CardHeader>
+                  <CardContent className="grid gap-6 md:grid-cols-2">
+                    <FormField control={form.control} name="branding.advertiserName" render={({ field }) => (<FormItem><FormLabel>Advertiser Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.brandingType" render={({ field }) => (
+                        <FormItem><FormLabel>Branding Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                            <SelectContent><SelectItem value="Full Wrap">Full Wrap</SelectItem><SelectItem value="Partial Wrap">Partial Wrap</SelectItem><SelectItem value="Interior">Interior</SelectItem></SelectContent>
+                        </Select><FormMessage /></FormItem>
+                    )}/>
+                    <FormField control={form.control} name="branding.brandingDescription" render={({ field }) => (<FormItem className="md:col-span-2"><FormLabel>Description</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.creativeContent" render={({ field }) => (<FormItem><FormLabel>Creative Content (URL)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.placementInstructions" render={({ field }) => (<FormItem><FormLabel>Placement Instructions</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                  </CardContent>
+                </Card>
+                 <Card>
+                  <CardHeader><CardTitle>Branding: Performance & SLA</CardTitle></CardHeader>
+                  <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <FormField control={form.control} name="branding.requiredHours" render={({ field }) => (<FormItem><FormLabel>Required Hours</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.minimumDailyHours" render={({ field }) => (<FormItem><FormLabel>Min. Daily Hours</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.minimumWeeklyHours" render={({ field }) => (<FormItem><FormLabel>Min. Weekly Hours</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.slaRequirements" render={({ field }) => (<FormItem className="md:col-span-3"><FormLabel>SLA Requirements</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                  </CardContent>
+                </Card>
+                 <Card>
+                  <CardHeader><CardTitle>Branding: Penalty & Compliance</CardTitle></CardHeader>
+                  <CardContent className="grid gap-6 md:grid-cols-2">
+                    <FormField control={form.control} name="branding.penaltyTerms" render={({ field }) => (<FormItem><FormLabel>Penalty Terms</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.penaltyPercentage" render={({ field }) => (<FormItem><FormLabel>Penalty Percentage (%)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                  </CardContent>
+                </Card>
+                 <Card>
+                  <CardHeader><CardTitle>Branding: Contact Info</CardTitle></CardHeader>
+                  <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <FormField control={form.control} name="branding.contactPerson" render={({ field }) => (<FormItem><FormLabel>Contact Person</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.contactEmail" render={({ field }) => (<FormItem><FormLabel>Contact Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="branding.contactPhone" render={({ field }) => (<FormItem><FormLabel>Contact Phone</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                  </CardContent>
+                </Card>
+              </>
+            )}
 
             <Card>
               <CardHeader>
@@ -235,14 +431,6 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl>
                     <SelectContent><SelectItem value="Cleaned">Cleaned</SelectItem><SelectItem value="Pending">Pending</SelectItem></SelectContent>
-                  </Select>
-                  <FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="brandingStatus" render={({ field }) => (
-                  <FormItem><FormLabel>Branding / Advertising Status</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl>
-                    <SelectContent><SelectItem value="Yes">Yes</SelectItem><SelectItem value="No">No</SelectItem></SelectContent>
                   </Select>
                   <FormMessage /></FormItem>
                 )}/>
