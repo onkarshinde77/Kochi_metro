@@ -29,12 +29,28 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import type { Train } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 
 // This is a temporary prop to simulate adding a train
 // In a real app, this would come from a layout context or a global state manager
 interface AddTrainPageProps {
   onAddTrain: (train: Train) => void;
 }
+
+const certificateSchema = z.object({
+    certificateId: z.string().optional(),
+    certificateNumber: z.string().optional(),
+    issueDate: z.string().min(1, "Issue date is required."),
+    expiryDate: z.string().min(1, "Expiry date is required."),
+    status: z.enum(['ACTIVE', 'EXPIRED', 'PENDING']).default('ACTIVE'),
+    isRenewal: z.boolean().default(false),
+    department: z.enum(['ROLLING_STOCK', 'SIGNALING', 'OPERATIONS']),
+    issuedBy: z.string().optional(),
+    approvedBy: z.string().optional(),
+    lastInspectionDate: z.string().min(1, "Last inspection date is required."),
+    nextInspectionDue: z.string().min(1, "Next inspection date is required."),
+    complianceNotes: z.string().optional(),
+})
 
 const trainSchema = z.object({
   id: z.string().min(1, "Train ID is required."),
@@ -49,11 +65,10 @@ const trainSchema = z.object({
   maxSpeed: z.coerce.number().int().positive("Max speed must be positive."),
   depot: z.string().min(1, "Depot assignment is required."),
   inductionDate: z.string().min(1, "Induction date is required."),
-  fitnessCertificate: z.object({
-    validFrom: z.string().min(1, "Start date is required."),
-    validUntil: z.string().min(1, "Expiry date is required."),
-  }),
-  safetyCertificateExpiry: z.string().min(1, "Expiry date is required."),
+  
+  fitnessCertificate: certificateSchema,
+  safetyCertificate: certificateSchema,
+
   nextMaintenanceDate: z.string().min(1, "Next maintenance date is required."),
   maintenanceInterval: z.object({
     distance: z.coerce.number().int().positive(),
@@ -94,6 +109,10 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
   const router = useRouter();
   const { toast } = useToast();
   
+  const today = new Date().toISOString().split('T')[0];
+  const oneYearFromNow = new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0];
+  const sixMonthsFromNow = new Date(new Date().setMonth(new Date().getMonth() + 6)).toISOString().split('T')[0];
+  
   const form = useForm<TrainFormValues>({
     resolver: zodResolver(trainSchema),
     defaultValues: {
@@ -102,13 +121,24 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
       capacity: { seating: 150, standing: 650 },
       maxSpeed: 90,
       depot: "Muttom",
-      inductionDate: new Date().toISOString().split('T')[0],
+      inductionDate: today,
       fitnessCertificate: {
-        validFrom: new Date().toISOString().split('T')[0],
-        validUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+        issueDate: today,
+        expiryDate: oneYearFromNow,
+        department: 'ROLLING_STOCK',
+        lastInspectionDate: today,
+        nextInspectionDue: oneYearFromNow,
+        status: 'ACTIVE',
       },
-      safetyCertificateExpiry: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-      nextMaintenanceDate: new Date(new Date().setMonth(new Date().getMonth() + 6)).toISOString().split('T')[0],
+      safetyCertificate: {
+        issueDate: today,
+        expiryDate: oneYearFromNow,
+        department: 'SIGNALING',
+        lastInspectionDate: today,
+        nextInspectionDue: oneYearFromNow,
+        status: 'ACTIVE',
+      },
+      nextMaintenanceDate: sixMonthsFromNow,
       maintenanceInterval: { distance: 20000, time: 6 },
       mileage: 0,
       mileageThreshold: 150000,
@@ -131,31 +161,15 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
       depot: data.depot,
       inductionDate: data.inductionDate,
       fitnessCertificate: {
-          certificateId: `FIT-${data.id}-${new Date().getFullYear()}`,
-          certificateNumber: `IR/FIT/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
-          issueDate: data.fitnessCertificate.validFrom,
-          expiryDate: data.fitnessCertificate.validUntil,
-          status: 'ACTIVE',
-          isRenewal: false,
-          department: 'ROLLING_STOCK',
-          issuedBy: 'System',
-          approvedBy: 'System',
-          lastInspectionDate: new Date().toISOString().split('T')[0],
-          nextInspectionDue: data.fitnessCertificate.validUntil,
+          ...data.fitnessCertificate,
+          certificateId: data.fitnessCertificate.certificateId || `FIT-${data.id}-${new Date().getFullYear()}`,
+          certificateNumber: data.fitnessCertificate.certificateNumber || `IR/FIT/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
           lastUpdated: new Date().toISOString(),
       },
       safetyCertificate: {
-          certificateId: `SAFE-${data.id}-${new Date().getFullYear()}`,
-          certificateNumber: `CMRS/SAFE/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
-          issueDate: new Date().toISOString().split('T')[0],
-          expiryDate: data.safetyCertificateExpiry,
-          status: 'ACTIVE',
-          isRenewal: false,
-          department: 'SIGNALING',
-          issuedBy: 'System',
-          approvedBy: 'System',
-          lastInspectionDate: new Date().toISOString().split('T')[0],
-          nextInspectionDue: data.safetyCertificateExpiry,
+          ...data.safetyCertificate,
+          certificateId: data.safetyCertificate.certificateId || `SAFE-${data.id}-${new Date().getFullYear()}`,
+          certificateNumber: data.safetyCertificate.certificateNumber || `CMRS/SAFE/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
           lastUpdated: new Date().toISOString(),
       },
       nextMaintenanceDate: data.nextMaintenanceDate,
@@ -284,20 +298,37 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Certificates & Validity</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                 <FormField control={form.control} name="fitnessCertificate.validFrom" render={({ field }) => (
-                  <FormItem><FormLabel>Fitness Cert. Start Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                 <FormField control={form.control} name="fitnessCertificate.validUntil" render={({ field }) => (
-                  <FormItem><FormLabel>Fitness Cert. Expiry Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-                <FormField control={form.control} name="safetyCertificateExpiry" render={({ field }) => (
-                  <FormItem><FormLabel>Safety/Signaling Cert. Expiry</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
-                )}/>
-              </CardContent>
+                <CardHeader>
+                    <CardTitle>Fitness Certificate</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <FormField control={form.control} name="fitnessCertificate.certificateId" render={({ field }) => (<FormItem><FormLabel>Certificate ID</FormLabel><FormControl><Input placeholder="FIT-T-026-2024" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.certificateNumber" render={({ field }) => (<FormItem><FormLabel>Certificate Number</FormLabel><FormControl><Input placeholder="IR/FIT/2024/123" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.issueDate" render={({ field }) => (<FormItem><FormLabel>Issue Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.expiryDate" render={({ field }) => (<FormItem><FormLabel>Expiry Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.lastInspectionDate" render={({ field }) => (<FormItem><FormLabel>Last Inspection</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.nextInspectionDue" render={({ field }) => (<FormItem><FormLabel>Next Inspection Due</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.issuedBy" render={({ field }) => (<FormItem><FormLabel>Issued By</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.approvedBy" render={({ field }) => (<FormItem><FormLabel>Approved By</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="fitnessCertificate.complianceNotes" render={({ field }) => (<FormItem className="lg:col-span-4"><FormLabel>Compliance Notes</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Safety & Signaling Certificate</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <FormField control={form.control} name="safetyCertificate.certificateId" render={({ field }) => (<FormItem><FormLabel>Certificate ID</FormLabel><FormControl><Input placeholder="SAFE-T-026-2024" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.certificateNumber" render={({ field }) => (<FormItem><FormLabel>Certificate Number</FormLabel><FormControl><Input placeholder="CMRS/SAFE/2024/123" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.issueDate" render={({ field }) => (<FormItem><FormLabel>Issue Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.expiryDate" render={({ field }) => (<FormItem><FormLabel>Expiry Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.lastInspectionDate" render={({ field }) => (<FormItem><FormLabel>Last Inspection</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.nextInspectionDue" render={({ field }) => (<FormItem><FormLabel>Next Inspection Due</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.issuedBy" render={({ field }) => (<FormItem><FormLabel>Issued By</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.approvedBy" render={({ field }) => (<FormItem><FormLabel>Approved By</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                    <FormField control={form.control} name="safetyCertificate.complianceNotes" render={({ field }) => (<FormItem className="lg:col-span-4"><FormLabel>Compliance Notes</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>)}/>
+                </CardContent>
             </Card>
 
             <Card>
