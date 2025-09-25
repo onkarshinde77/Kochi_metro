@@ -90,6 +90,21 @@ export function DepotMap() {
 
   const getTrainById = (id: string) => trains.find(t => t.id === id);
 
+  const getTrackBgColor = (type: Track['type']) => {
+    switch (type) {
+      case 'Stabling':
+        return 'bg-blue-50';
+      case 'Maintenance':
+        return 'bg-orange-50';
+      case 'Washing':
+        return 'bg-cyan-50';
+      case 'Mainline':
+        return 'bg-green-50';
+      default:
+        return 'bg-muted';
+    }
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -105,7 +120,7 @@ export function DepotMap() {
                 <p className="font-bold">{track.id}</p>
                 <p className="text-xs text-muted-foreground">{track.type}</p>
               </div>
-              <div className="flex-1 bg-muted rounded-lg h-24 p-2 border-2 border-dashed border-gray-300 flex flex-wrap items-start gap-2 overflow-x-auto">
+              <div className={cn("flex-1 rounded-lg h-24 p-2 border-2 border-dashed border-gray-300 flex flex-wrap items-start gap-2 overflow-x-auto", getTrackBgColor(track.type))}>
                 {track.trains.map(trainId => {
                   const train = getTrainById(trainId);
                   if (!train) return null;
