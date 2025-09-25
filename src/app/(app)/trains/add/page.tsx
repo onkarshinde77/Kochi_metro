@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -27,15 +27,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import type { Train } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-
-// This is a temporary prop to simulate adding a train
-// In a real app, this would come from a layout context or a global state manager
-interface AddTrainPageProps {
-  onAddTrain: (train: Train) => void;
-}
 
 const certificateSchema = z.object({
     certificateId: z.string().optional(),
@@ -130,7 +123,7 @@ const trainSchema = z.object({
 
 type TrainFormValues = z.infer<typeof trainSchema>;
 
-export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
+export default function AddTrainPage() {
   const router = useRouter();
   const { toast } = useToast();
   
@@ -190,79 +183,17 @@ export default function AddTrainPage({ onAddTrain }: AddTrainPageProps) {
   const watchBrandingStatus = form.watch("brandingStatus");
 
   function onSubmit(data: TrainFormValues) {
-    const newTrain: any = { // Using any to build up the object
-      id: data.id,
-      model: data.model,
-      manufacturingYear: data.manufacturingYear,
-      vendor: data.vendor,
-      coachCount: data.coachCount,
-      capacity: data.capacity,
-      maxSpeed: data.maxSpeed,
-      depot: data.depot,
-      inductionDate: data.inductionDate,
-      fitnessCertificate: {
-          ...data.fitnessCertificate,
-          certificateId: data.fitnessCertificate.certificateId || `FIT-${data.id}-${new Date().getFullYear()}`,
-          certificateNumber: data.fitnessCertificate.certificateNumber || `IR/FIT/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
-          lastUpdated: new Date().toISOString(),
-      },
-      safetyCertificate: {
-          ...data.safetyCertificate,
-          certificateId: data.safetyCertificate.certificateId || `SAFE-${data.id}-${new Date().getFullYear()}`,
-          certificateNumber: data.safetyCertificate.certificateNumber || `CMRS/SAFE/${new Date().getFullYear()}/${Math.floor(Math.random() * 1000)}`,
-          lastUpdated: new Date().toISOString(),
-      },
-      nextMaintenanceDate: data.nextMaintenanceDate,
-      lastMaintenanceDate: new Date().toISOString().split('T')[0],
-      maintenanceInterval: data.maintenanceInterval,
-      mileage: data.mileage,
-      mileageThreshold: data.mileageThreshold,
-      cleaning: {
-          bayId: `Bay-0${(Math.floor(Math.random()*3)) + 1}`,
-          cleaningType: 'ROUTINE',
-          status: 'COMPLETED',
-          lastUpdated: new Date().toISOString(),
-          lastCleaned: new Date().toISOString().split('T')[0],
-          scheduledStart: new Date().toISOString(),
-          scheduledEnd: new Date().toISOString(),
-          assignedTeamId: 'Team-A',
-          supervisorOverride: false,
-      },
-      branding: {
-        status: data.brandingStatus,
-        ...(data.brandingStatus === "Yes" ? data.branding : {}),
-      },
-      status: "Idle",
-      currentTrack: data.depot,
-      isElectric: true,
-      trainNumber: data.trainNumber || `KMRL-${data.id.split('-')[1] || 'XXX'}`,
-      serialNumber: data.serialNumber || `${data.vendor.toUpperCase()}-KOC-${data.manufacturingYear}-${data.id.split('-')[1] || 'XXX'}`,
-      accelerationRate: data.accelerationRate,
-      brakingDistance: data.brakingDistance,
-      engineType: data.engineType,
-      energySource: data.energySource,
-      powerOutput: data.powerOutput,
-      batteryBackup: data.batteryBackup || { available: false },
-      regenerativeBraking: data.regenerativeBraking,
-      avgEnergyConsumption: data.avgEnergyConsumption,
-      doorsPerCoach: data.doorsPerCoach,
-      trainLength: data.trainLength,
-      coachLength: data.coachLength,
-      trainWidth: data.trainWidth,
-      trainHeight: data.trainHeight,
-      floorHeight: data.floorHeight,
-      safetySystems: data.safetySystems?.split(',').map(s => s.trim()) || [],
-    };
     
-    // This is where you would typically send data to your backend/database.
-    // For now, we'll use the onAddTrain prop to update the state in the layout.
-    if(onAddTrain) {
-      onAddTrain(newTrain as Train);
-    }
+    // This is a placeholder. In a real application, you would send this data
+    // to your backend to be persisted. Since we are working with mock data,
+    // this action doesn't actually add the train to the list on the server.
+    // The data.ts file is re-evaluated on each server request, so changes are not persisted.
+    
+    console.log("New train data (not persisted):", data);
 
     toast({
-      title: "Metro Added",
-      description: `Metro ${data.id} has been successfully added to the fleet.`,
+      title: "Metro Added (Simulation)",
+      description: `Metro ${data.id} would be added to the fleet. This is a simulation.`,
     });
     router.push('/all-trains');
   }

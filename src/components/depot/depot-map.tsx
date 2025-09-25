@@ -2,8 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { initialTrains, depotLayout as initialDepotLayout } from '@/lib/data';
-import type { Train, Track } from '@/lib/types';
+import type { Train, Track, DepotLayout } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import {
@@ -35,7 +34,12 @@ type AlertInfo = {
     description: string;
 } | null;
 
-export function DepotMap() {
+interface DepotMapProps {
+    initialTrains: Train[];
+    initialDepotLayout: DepotLayout;
+}
+
+export function DepotMap({ initialTrains, initialDepotLayout }: DepotMapProps) {
   const [trains, setTrains] = useState<Train[]>([]);
   const [depotLayout, setDepotLayout] = useState(initialDepotLayout);
   const [draggedTrainId, setDraggedTrainId] = useState<string | null>(null);
@@ -73,7 +77,7 @@ export function DepotMap() {
     if (initialDepotLayout.tracks.length > 0) {
       setNewTrainTrackId(initialDepotLayout.tracks[0].id);
     }
-  }, []);
+  }, [initialTrains, initialDepotLayout]);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, trainId: string) => {
     setDraggedTrainId(trainId);
@@ -192,9 +196,9 @@ export function DepotMap() {
     const existingTrain = trains.find(t => t.id === newTrainId);
 
     if (existingTrain) {
-        // Train exists in the fleet but not in the depot, so move it.
         const sourceTrackId = existingTrain.currentTrack;
         setPendingMove({ trainId: newTrainId, sourceTrackId, targetTrackId: newTrainTrackId });
+        setNewTrainId('');
         return;
     }
   

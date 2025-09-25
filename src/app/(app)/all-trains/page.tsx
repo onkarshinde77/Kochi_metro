@@ -15,33 +15,15 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
 
-export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Train[] }) {
-  const [allTrains, setAllTrains] = React.useState<Train[]>([]);
+export default function AllTrainsPage() {
   const [statusFilter, setStatusFilter] = React.useState<string>('all');
   const [searchTerm, setSearchTerm] = React.useState<string>('');
-  const [isClient, setIsClient] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsClient(true);
-    setAllTrains(initialTrains);
-  }, []);
-
-  React.useEffect(() => {
-    if(extraTrains.length > 0) {
-      setAllTrains(prevTrains => {
-        const existingIds = new Set(prevTrains.map(t => t.id));
-        const newTrains = extraTrains.filter(t => !existingIds.has(t.id));
-        return [...prevTrains, ...newTrains];
-      });
-    }
-  }, [extraTrains]);
   
-  const filteredTrains = allTrains.filter(train => {
+  const filteredTrains = initialTrains.filter(train => {
     const statusMatch = statusFilter === 'all' || train.status === statusFilter;
     const searchMatch = train.id.toLowerCase().includes(searchTerm.toLowerCase());
     return statusMatch && searchMatch;
@@ -89,15 +71,6 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
         </div>
       </div>
      
-      {!isClient ? (
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="space-y-3">
-                <Skeleton className="h-[250px] w-full rounded-xl" />
-              </div>
-            ))}
-        </div>
-      ) : (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {filteredTrains.map(train => (
@@ -110,7 +83,6 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
             </div>
             )}
         </>
-      )}
     </div>
   );
 }

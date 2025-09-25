@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { initialTrains, depotLayout } from "@/lib/data";
 
 export default function DepotPage() {
   return (
@@ -42,7 +43,7 @@ export default function DepotPage() {
         </CardContent>
       </Card>
       <div className="mt-6">
-        <DepotMap />
+        <DepotMap initialTrains={initialTrains} initialDepotLayout={depotLayout} />
       </div>
     </div>
   );
