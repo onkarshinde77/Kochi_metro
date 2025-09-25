@@ -69,13 +69,9 @@ export const pastJobCards: JobCard[] = [
   { id: 'JC-108', trainId: 'T-015', task: 'Battery replacement', status: 'Completed', assignedTo: 'Suresh Gupta', createdDate: '2024-07-21', priority: 'High', expectedCompletion: '2024-07-22', supervisor: 'Vikram Singh', attachments: [] },
 ];
 
-export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
+export const initialTrains: Train[] = Array.from({ length: 24 }, (_, i) => {
   const trainId = `T-${(i + 1).toString().padStart(3, '0')}`;
   
-  // Define depot tracks vs in-service tracks
-  const depotTracks = ['SL1', 'SL2', 'SL3', 'ML1', 'ML2', 'WL1'];
-  const inServiceTracks = ['Main-N', 'Main-S'];
-
   let currentTrack, status;
   // Assign a few trains to depot lines, and the rest to mainline
   if (i === 0) { // T-001 on Stabling Line 1
@@ -97,7 +93,7 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
     currentTrack = 'SL3';
     status = 'Idle';
   } else { // All other trains are in service
-    currentTrack = inServiceTracks[i % inServiceTracks.length];
+    currentTrack = 'Mainline';
     status = 'Operational';
   }
 
@@ -235,12 +231,12 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
 
 export const depotLayout: DepotLayout = {
   tracks: [
-    { id: 'SL1', type: 'Stabling', length: 200, trains: initialTrains.filter(t => t.currentTrack === 'SL1').map(t => t.id) },
-    { id: 'SL2', type: 'Stabling', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'SL2').map(t => t.id) },
-    { id: 'SL3', type: 'Stabling', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'SL3').map(t => t.id) },
-    { id: 'ML1', type: 'Maintenance', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'ML1').map(t => t.id) },
-    { id: 'ML2', type: 'Maintenance', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'ML2').map(t => t.id) },
-    { id: 'WL1', type: 'Washing', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'WL1').map(t => t.id) },
+    { id: 'SL1', type: 'Stabling', length: 200, trains: ['T-001'] },
+    { id: 'SL2', type: 'Stabling', length: 100, trains: ['T-004'] },
+    { id: 'SL3', type: 'Stabling', length: 100, trains: ['T-006'] },
+    { id: 'ML1', type: 'Maintenance', length: 100, trains: ['T-002'] },
+    { id: 'ML2', type: 'Maintenance', length: 100, trains: ['T-005'] },
+    { id: 'WL1', type: 'Washing', length: 100, trains: ['T-003'] },
     { id: 'Main-N', type: 'Mainline', length: 300, trains: [] },
     { id: 'Main-S', type: 'Mainline', length: 300, trains: [] },
   ],
