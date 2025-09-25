@@ -160,11 +160,21 @@ export function DepotMap() {
   }
 
   const handleAddTrain = () => {
-    if (!newTrainId || !newTrainTrackId) {
+    const trainIdRegex = /^T-\d{3}$/;
+    if (!trainIdRegex.test(newTrainId)) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Train ID Format",
+        description: "Please enter a valid train ID in the format 'T-XXX' (e.g., T-001).",
+      });
+      return;
+    }
+    
+    if (!newTrainTrackId) {
       toast({
         variant: "destructive",
         title: "Missing Information",
-        description: "Please enter a train ID and select a track.",
+        description: "Please select a track.",
       });
       return;
     }
