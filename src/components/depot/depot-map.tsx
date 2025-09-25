@@ -177,11 +177,31 @@ export function DepotMap() {
         });
         return;
     }
+
+    const targetTrack = depotLayout.tracks.find(t => t.id === newTrainTrackId);
+    if (!targetTrack) return;
+    
+    let newStatus: Train['status'] = 'Idle';
+    switch (targetTrack.type) {
+        case 'Maintenance':
+            newStatus = 'Maintenance';
+            break;
+        case 'Washing':
+            newStatus = 'Washing';
+            break;
+        case 'Mainline':
+            newStatus = 'Operational';
+            break;
+        case 'Stabling':
+        default:
+            newStatus = 'Idle';
+            break;
+    }
     
     const newTrainToAdd: Train = {
         id: newTrainId,
         model: 'Alstom Metropolis',
-        status: 'Idle', // Default status
+        status: newStatus,
         currentTrack: newTrainTrackId,
         mileage: 0,
         nextMaintenanceDate: new Date().toISOString(),
