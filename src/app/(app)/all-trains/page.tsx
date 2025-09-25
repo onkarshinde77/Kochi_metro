@@ -90,7 +90,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
       </div>
      
       {!isClient ? (
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="space-y-3">
                 <Skeleton className="h-[250px] w-full rounded-xl" />
@@ -99,7 +99,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
         </div>
       ) : (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {filteredTrains.map(train => (
                 <TrainCard key={train.id} train={train} />
             ))}

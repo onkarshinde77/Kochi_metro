@@ -32,9 +32,9 @@ const isCertificateExpiringSoon = (expiryDate: string) => {
 }
 
 const DetailRow = ({ label, value, icon, valueClassName }: { label: string; value: React.ReactNode; icon: React.ReactNode; valueClassName?: string }) => (
-    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between">
-        <span className="text-muted-foreground flex items-center gap-2 mb-1 xs:mb-0">{icon} {label}</span>
-        <span className={cn("font-medium text-right xs:text-right", valueClassName)}>{value}</span>
+    <div className="flex items-center justify-between">
+        <span className="text-muted-foreground flex items-center gap-2">{icon} {label}</span>
+        <span className={cn("font-medium text-right", valueClassName)}>{value}</span>
     </div>
 );
 
