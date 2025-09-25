@@ -62,20 +62,29 @@ export function DepotMap() {
       )
     );
 
-    // Update depotLayout state
-    setDepotLayout(prevLayout => {
-      const newTracks = prevLayout.tracks.map(track => {
-        if (track.id === sourceTrackId) {
-          return { ...track, trains: track.trains.filter(id => id !== draggedTrainId) };
-        }
-        if (track.id === targetTrackId) {
-          return { ...track, trains: [...track.trains, draggedTrainId] };
-        }
-        return track;
-      });
-      return { ...prevLayout, tracks: newTracks };
-    });
+    // This part is a bit tricky with React state.
+    // To ensure the UI updates correctly, we'll directly manipulate a new layout object.
+    const newLayout = { ...depotLayout };
 
+    // Find source and target tracks in the new layout
+    const sourceTrackIndex = newLayout.tracks.findIndex(t => t.id === sourceTrackId);
+    const targetTrackIndex = newLayout.tracks.findIndex(t => t.id === targetTrackId);
+
+    if (sourceTrackIndex > -1) {
+        newLayout.tracks[sourceTrackIndex] = {
+            ...newLayout.tracks[sourceTrackIndex],
+            trains: newLayout.tracks[sourceTrackIndex].trains.filter(id => id !== draggedTrainId)
+        };
+    }
+    
+    if (targetTrackIndex > -1) {
+         newLayout.tracks[targetTrackIndex] = {
+            ...newLayout.tracks[targetTrackIndex],
+            trains: [...newLayout.tracks[targetTrackIndex].trains, draggedTrainId]
+        };
+    }
+    
+    setDepotLayout(newLayout);
     setDraggedTrainId(null);
   };
 
