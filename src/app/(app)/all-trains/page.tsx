@@ -56,23 +56,25 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
                 Real-time overview of the entire fleet's status and location.
             </p>
         </div>
-        <div className="flex items-center gap-4 w-full md:w-auto">
-            <Button asChild>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
+            <Button asChild className="w-full sm:w-auto">
                 <Link href="/trains/add">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Add New Metro
                 </Link>
             </Button>
-            <Input
-              placeholder="Filter by Metro ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-xs"
-            />
-             <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Input
+                placeholder="Filter by Metro ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:max-w-xs"
+                />
+            </div>
+             <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Label htmlFor="status-filter" className="sr-only">Status:</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger id="status-filter" className="w-[180px]">
+                <SelectTrigger id="status-filter" className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -88,7 +90,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
       </div>
      
       {!isClient ? (
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="space-y-3">
                 <Skeleton className="h-[250px] w-full rounded-xl" />
@@ -97,7 +99,7 @@ export default function AllTrainsPage({ extraTrains = [] }: { extraTrains?: Trai
         </div>
       ) : (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {filteredTrains.map(train => (
                 <TrainCard key={train.id} train={train} />
             ))}

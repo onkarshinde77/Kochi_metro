@@ -31,40 +31,52 @@ const isCertificateExpiringSoon = (expiryDate: string) => {
     return diffDays <= 30;
 }
 
+const DetailRow = ({ label, value, icon, valueClassName }: { label: string; value: React.ReactNode; icon: React.ReactNode; valueClassName?: string }) => (
+    <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between">
+        <span className="text-muted-foreground flex items-center gap-2 mb-1 xs:mb-0">{icon} {label}</span>
+        <span className={cn("font-medium text-right xs:text-right", valueClassName)}>{value}</span>
+    </div>
+);
+
 export function TrainCard({ train }: { train: Train }) {
   const { icon, badgeClass } = getStatusInfo(train.status);
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold text-primary">{train.id}</CardTitle>
-          <Badge className={cn('gap-1.5', badgeClass)}>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <CardTitle className="text-xl font-bold text-primary">{train.id}</CardTitle>
+            <p className="text-sm text-muted-foreground">{train.model}</p>
+          </div>
+          <Badge className={cn('gap-1.5 shrink-0', badgeClass)}>
             {icon}
             {train.status}
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">{train.model}</p>
       </CardHeader>
-      <CardContent className="flex-1 space-y-3 text-sm">
-        <div className="flex items-center justify-between">
-            <span className="text-muted-foreground flex items-center gap-2"><MapPin className="h-4 w-4" /> Location</span>
-            <span className="font-medium">{train.currentTrack}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-muted-foreground flex items-center gap-2"><Gauge className="h-4 w-4" /> Mileage</span>
-          <span className="font-medium">{train.mileage.toLocaleString()} km</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-muted-foreground flex items-center gap-2"><Calendar className="h-4 w-4" /> Next Maintenance</span>
-          <span className="font-medium">{new Date(train.nextMaintenanceDate).toLocaleDateString()}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-muted-foreground flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> Fitness Cert.</span>
-          <span className={cn("font-medium", isCertificateExpiringSoon(train.fitnessCertificate.expiryDate) && "text-destructive")}>
-            Expires {new Date(train.fitnessCertificate.expiryDate).toLocaleDateString()}
-          </span>
-        </div>
+      <CardContent className="flex-1 space-y-4 text-sm">
+        <DetailRow 
+            icon={<MapPin className="h-4 w-4" />}
+            label="Location"
+            value={train.currentTrack}
+        />
+        <DetailRow 
+            icon={<Gauge className="h-4 w-4" />}
+            label="Mileage"
+            value={`${train.mileage.toLocaleString()} km`}
+        />
+        <DetailRow 
+            icon={<Calendar className="h-4 w-4" />}
+            label="Next Maintenance"
+            value={new Date(train.nextMaintenanceDate).toLocaleDateString()}
+        />
+        <DetailRow 
+            icon={<ShieldCheck className="h-4 w-4" />}
+            label="Fitness Cert."
+            value={`Expires ${new Date(train.fitnessCertificate.expiryDate).toLocaleDateString()}`}
+            valueClassName={cn(isCertificateExpiringSoon(train.fitnessCertificate.expiryDate) && "text-destructive")}
+        />
       </CardContent>
       <CardFooter>
         <Button asChild variant="secondary" className="w-full">
