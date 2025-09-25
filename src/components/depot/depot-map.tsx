@@ -168,16 +168,18 @@ export function DepotMap() {
       });
       return;
     }
-
+  
     const trainExists = depotLayout.tracks.some(track => track.trains.includes(newTrainId));
-    if (trainExists) {
+    const alreadyInMemory = trains.some(train => train.id === newTrainId);
+  
+    if (trainExists || alreadyInMemory) {
         setAlertInfo({
             title: "Train Already Exists",
-            description: `Train ${newTrainId} is already on a depot track. Please use a different ID.`
+            description: `Train ${newTrainId} is already in the depot. Please use a different ID.`
         });
         return;
     }
-
+  
     const targetTrack = depotLayout.tracks.find(t => t.id === newTrainTrackId);
     if (!targetTrack) return;
     
@@ -219,7 +221,6 @@ export function DepotMap() {
             nextInspectionDue: '',
             lastUpdated: new Date().toISOString()
         },
-        // Fill other required Train properties with defaults
         trainNumber: '',
         manufacturingYear: new Date().getFullYear(),
         vendor: '',
@@ -275,9 +276,9 @@ export function DepotMap() {
         floorHeight: 1.1,
         safetySystems: [],
     };
-
+  
     setTrains(prev => [...prev, newTrainToAdd]);
-
+  
     setDepotLayout(prevLayout => {
         const newTracks = prevLayout.tracks.map(track => {
             if (track.id === newTrainTrackId) {
@@ -287,7 +288,7 @@ export function DepotMap() {
         });
         return { ...prevLayout, tracks: newTracks };
     });
-
+  
     toast({
         title: "Train Added",
         description: `Train ${newTrainId} has been added to track ${newTrainTrackId}.`,
