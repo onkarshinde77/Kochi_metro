@@ -169,16 +169,26 @@ export function DepotMap() {
       return;
     }
   
-    const trainExists = trains.some(train => train.id === newTrainId);
+    const trainExistsInDepot = depotLayout.tracks.some(track => track.trains.includes(newTrainId));
 
-    if (trainExists) {
+    if (trainExistsInDepot) {
         setAlertInfo({
-            title: "Train Already Exists",
-            description: `Train ${newTrainId} is already in the depot. Please use a different ID.`
+            title: "Train Already in Depot",
+            description: `Train ${newTrainId} is already on a depot track. Please use a different ID.`
         });
         return;
     }
+
+    const existingTrain = trains.find(t => t.id === newTrainId);
+
+    if (existingTrain) {
+        // Train exists in the fleet but not in the depot, so move it.
+        const sourceTrackId = existingTrain.currentTrack;
+        setPendingMove({ trainId: newTrainId, sourceTrackId, targetTrackId: newTrainTrackId });
+        return;
+    }
   
+    // This is a completely new train not in the fleet
     const targetTrack = depotLayout.tracks.find(t => t.id === newTrainTrackId);
     if (!targetTrack) return;
     
