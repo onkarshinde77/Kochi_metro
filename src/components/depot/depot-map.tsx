@@ -169,10 +169,9 @@ export function DepotMap() {
       return;
     }
   
-    const trainExists = depotLayout.tracks.some(track => track.trains.includes(newTrainId));
-    const alreadyInMemory = trains.some(train => train.id === newTrainId);
+    const trainExistsOnTrack = depotLayout.tracks.some(track => track.trains.includes(newTrainId));
   
-    if (trainExists || alreadyInMemory) {
+    if (trainExistsOnTrack) {
         setAlertInfo({
             title: "Train Already Exists",
             description: `Train ${newTrainId} is already in the depot. Please use a different ID.`
