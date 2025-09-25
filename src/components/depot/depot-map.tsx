@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { initialTrains, depotLayout as initialDepotLayout } from '@/lib/data';
 import type { Train, Track } from '@/lib/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,9 +9,21 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
 export function DepotMap() {
-  const [trains, setTrains] = useState<Train[]>(initialTrains);
+  const [trains, setTrains] = useState<Train[]>([]);
   const [depotLayout, setDepotLayout] = useState(initialDepotLayout);
   const [draggedTrainId, setDraggedTrainId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Ensure correct initial status for trains on stabling lines
+    const correctedTrains = initialTrains.map(train => {
+      const track = initialDepotLayout.tracks.find(t => t.trains.includes(train.id));
+      if (track && track.type === 'Stabling') {
+        return { ...train, status: 'Idle', currentTrack: track.id };
+      }
+      return train;
+    });
+    setTrains(correctedTrains);
+  }, []);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, trainId: string) => {
     setDraggedTrainId(trainId);
@@ -79,7 +91,7 @@ export function DepotMap() {
     
     if (targetTrackIndex > -1) {
          newLayout.tracks[targetTrackIndex] = {
-            ...newLayout.tracks[targetTrackIndex],
+            ...new-layout.tracks[targetTrackIndex],
             trains: [...newLayout.tracks[targetTrackIndex].trains, draggedTrainId]
         };
     }
