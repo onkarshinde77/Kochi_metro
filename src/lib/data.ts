@@ -69,7 +69,7 @@ export const pastJobCards: JobCard[] = [
   { id: 'JC-108', trainId: 'T-015', task: 'Battery replacement', status: 'Completed', assignedTo: 'Suresh Gupta', createdDate: '2024-07-21', priority: 'High', expectedCompletion: '2024-07-22', supervisor: 'Vikram Singh', attachments: [] },
 ];
 
-const allTrainDetails: Omit<Train, 'id' | 'status' | 'currentTrack'>[] = Array.from({ length: 24 }, (_, i) => {
+const allTrainDetails: Omit<Train, 'id' | 'status' | 'currentTrack'>[] = Array.from({ length: 25 }, (_, i) => {
   const trainId = `T-${(i + 1).toString().padStart(3, '0')}`;
   const brandingStatus = i % 5 === 0 ? 'Yes' : 'No';
 
