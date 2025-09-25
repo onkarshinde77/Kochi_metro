@@ -14,11 +14,26 @@ export function DepotMap() {
   const [draggedTrainId, setDraggedTrainId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Ensure correct initial status for trains on stabling lines
+    // Ensure correct initial status for trains based on their track type
     const correctedTrains = initialTrains.map(train => {
       const track = initialDepotLayout.tracks.find(t => t.trains.includes(train.id));
-      if (track && track.type === 'Stabling') {
-        return { ...train, status: 'Idle', currentTrack: track.id };
+      if (track) {
+        let newStatus: Train['status'] = train.status;
+        switch(track.type) {
+            case 'Stabling':
+                newStatus = 'Idle';
+                break;
+            case 'Maintenance':
+                newStatus = 'Maintenance';
+                break;
+            case 'Washing':
+                newStatus = 'Washing';
+                break;
+            case 'Mainline':
+                newStatus = 'Operational';
+                break;
+        }
+        return { ...train, status: newStatus, currentTrack: track.id };
       }
       return train;
     });
