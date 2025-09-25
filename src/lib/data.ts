@@ -71,8 +71,36 @@ export const pastJobCards: JobCard[] = [
 
 export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
   const trainId = `T-${(i + 1).toString().padStart(3, '0')}`;
-  const statusOptions: Train['status'][] = ['Operational', 'Maintenance', 'Idle', 'Washing'];
-  const trackOptions = ['SL1', 'SL2', 'SL3', 'ML1', 'ML2', 'WL1', 'Main-N', 'Main-S'];
+  
+  // Define depot tracks vs in-service tracks
+  const depotTracks = ['SL1', 'SL2', 'SL3', 'ML1', 'ML2', 'WL1'];
+  const inServiceTracks = ['Main-N', 'Main-S'];
+
+  let currentTrack, status;
+  // Assign a few trains to depot lines, and the rest to mainline
+  if (i === 0) { // T-001 on Stabling Line 1
+    currentTrack = 'SL1';
+    status = 'Idle';
+  } else if (i === 1) { // T-002 on Maintenance Line 1
+    currentTrack = 'ML1';
+    status = 'Maintenance';
+  } else if (i === 2) { // T-003 on Washing Line 1
+    currentTrack = 'WL1';
+    status = 'Washing';
+  } else if (i === 3) { // T-004 on Stabling Line 2
+    currentTrack = 'SL2';
+    status = 'Idle';
+  } else if (i === 4) { // T-005 on Maintenance Line 2
+      currentTrack = 'ML2';
+      status = 'Maintenance';
+  } else if (i === 5) { // T-006 on Stabling Line 3
+    currentTrack = 'SL3';
+    status = 'Idle';
+  } else { // All other trains are in service
+    currentTrack = inServiceTracks[i % inServiceTracks.length];
+    status = 'Operational';
+  }
+
   const brandingStatus = i % 5 === 0 ? 'Yes' : 'No';
 
   let branding: BrandingDetails;
@@ -187,8 +215,8 @@ export const initialTrains: Train[] = Array.from({ length: 25 }, (_, i) => {
     floorHeight: 1.1,
     depot: 'Muttom',
     inductionDate: new Date(2019, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
-    status: statusOptions[i % statusOptions.length],
-    currentTrack: trackOptions[i % trackOptions.length],
+    status: status,
+    currentTrack: currentTrack,
     assignedRoute: i % 4 === 0 ? 'Aluva - Pettah' : undefined,
     fitnessCertificate: fitnessCertificate,
     safetyCertificate: safetyCertificate,
@@ -213,7 +241,7 @@ export const depotLayout: DepotLayout = {
     { id: 'ML1', type: 'Maintenance', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'ML1').map(t => t.id) },
     { id: 'ML2', type: 'Maintenance', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'ML2').map(t => t.id) },
     { id: 'WL1', type: 'Washing', length: 100, trains: initialTrains.filter(t => t.currentTrack === 'WL1').map(t => t.id) },
-    { id: 'Main-N', type: 'Mainline', length: 300, trains: initialTrains.filter(t => t.currentTrack === 'Main-N').map(t => t.id) },
-    { id: 'Main-S', type: 'Mainline', length: 300, trains: initialTrains.filter(t => t.currentTrack === 'Main-S').map(t => t.id) },
+    { id: 'Main-N', type: 'Mainline', length: 300, trains: [] },
+    { id: 'Main-S', type: 'Mainline', length: 300, trains: [] },
   ],
 };
