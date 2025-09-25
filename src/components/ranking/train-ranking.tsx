@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
@@ -47,7 +48,10 @@ export function TrainRanking() {
 
   useEffect(() => {
     // Generate random data on the client side to prevent hydration errors
-    const generatedTrains = allTrains.map(train => ({
+    // Only include trains that are operational and not in the depot
+    const availableTrains = allTrains.filter(train => train.status === 'Operational');
+
+    const generatedTrains = availableTrains.map(train => ({
         trainId: train.id,
         fitnessCertificateStatus: Math.random() > 0.2 ? "Valid" : "Expired",
         jobCardStatus: Math.random() > 0.5 ? "Completed" : "Open",
@@ -74,7 +78,7 @@ export function TrainRanking() {
         <CardHeader>
           <CardTitle>Available Trains for Induction</CardTitle>
           <CardDescription>
-            Current status of all trains in the fleet awaiting induction decision.
+            Current status of all operational trains in the fleet awaiting induction decision.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -151,13 +155,13 @@ export function TrainRanking() {
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-64 border-2 border-dashed rounded-lg">
-                    {trainsForRanking.length === 0 ? (
+                    {isPending || trainsForRanking.length === 0 && allTrains.length > 0 ? (
                       <Loader2 className="h-10 w-10 animate-spin mb-2" />
                     ) : (
                       <Sparkles className="h-10 w-10 mb-2"/>
                     )}
-                    <p className="font-semibold">{trainsForRanking.length === 0 ? 'Generating train data...' : 'Ranking results will appear here'}</p>
-                    <p className="text-sm">{trainsForRanking.length === 0 ? 'Please wait a moment.' : 'Click the button to generate the ranking.'}</p>
+                    <p className="font-semibold">{isPending ? 'Generating ranking...' : (trainsForRanking.length === 0 ? 'No trains currently available for induction.' : 'Ranking results will appear here')}</p>
+                    <p className="text-sm">{isPending ? 'Please wait...' : (trainsForRanking.length === 0 ? 'All trains are in the depot.' : 'Click the button to generate the ranking.')}</p>
                 </div>
             )}
         </CardContent>
