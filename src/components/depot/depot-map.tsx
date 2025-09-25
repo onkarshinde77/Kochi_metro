@@ -91,7 +91,7 @@ export function DepotMap() {
     
     if (targetTrackIndex > -1) {
          newLayout.tracks[targetTrackIndex] = {
-            ...new-layout.tracks[targetTrackIndex],
+            ...newLayout.tracks[targetTrackIndex],
             trains: [...newLayout.tracks[targetTrackIndex].trains, draggedTrainId]
         };
     }
