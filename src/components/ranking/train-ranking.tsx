@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { initialTrains as allTrains } from "@/lib/data";
-import type { Train } from "@/lib/types";
 
 type TrainForRanking = {
     trainId: string;
@@ -48,7 +47,7 @@ export function TrainRanking() {
 
   useEffect(() => {
     // Generate random data on the client side to prevent hydration errors
-    // Only include trains that are operational and not in the depot
+    // Only include trains that are operational
     const availableTrains = allTrains.filter(train => train.status === 'Operational');
 
     const generatedTrains = availableTrains.map(train => ({
@@ -155,7 +154,7 @@ export function TrainRanking() {
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-64 border-2 border-dashed rounded-lg">
-                    {isPending || trainsForRanking.length === 0 && allTrains.length > 0 ? (
+                    {isPending || (trainsForRanking.length === 0 && allTrains.length > 0) ? (
                       <Loader2 className="h-10 w-10 animate-spin mb-2" />
                     ) : (
                       <Sparkles className="h-10 w-10 mb-2"/>

@@ -217,6 +217,7 @@ export const initialTrains: Train[] = allTrainDetails.map((details, i) => {
     };
 });
 
+
 export const depotLayout: DepotLayout = {
   tracks: [
     { id: 'SL1', type: 'Stabling', length: 200, trains: ['T-001'] },
