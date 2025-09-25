@@ -215,7 +215,7 @@ export const initialTrains: Train[] = allTrainDetails.map((details, i) => {
         currentTrack: assignment ? assignment.currentTrack : 'Mainline',
         status: assignment ? assignment.status : 'Operational',
     };
-}).filter(train => train.id !== 'T-025'); // Keep T-025 out for manual adding
+});
 
 export const depotLayout: DepotLayout = {
   tracks: [
